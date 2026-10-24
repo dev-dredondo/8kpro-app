@@ -40,6 +40,10 @@ object BrandConfig {
         return host.equals(serverHost, ignoreCase = true)
     }
 
+    /** Whether [text] (an error message, a log line) mentions the built-in server anywhere. */
+    fun mentionsServer(text: String?): Boolean =
+        !text.isNullOrEmpty() && serverHost.isNotEmpty() && text.contains(serverHost, ignoreCase = true)
+
     /** Whether [url] is the built-in server (ignoring a trailing slash and letter case). */
     fun isBrandServer(url: String?): Boolean =
         url != null && url.trim().trimEnd('/').equals(serverUrl, ignoreCase = true)
