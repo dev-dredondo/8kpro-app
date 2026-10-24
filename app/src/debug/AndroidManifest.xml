@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name="tv.own.owntv.core.i18n.LocaleTestActivity"
+            android:exported="false" />
+        <activity
+            android:name="tv.own.owntv.core.i18n.FontFallbackQaActivity"
+            android:exported="true" />
+    </application>
+</manifest>

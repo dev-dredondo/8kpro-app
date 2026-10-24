@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="local_sync_error_unreachable">This device could not be reached. On it, open 8K PRO → More → Local sync and turn Sync mode on. Both devices must be on the same Wi-Fi.</string>
+    <string name="settings_app_icon_summary">Colour of the 8K PRO icon and logo</string>
+    <string name="app_icon_restart_title">Restart 8K PRO?</string>
+    <string name="app_icon_restart_message">You chose a new icon and logo. They take effect after 8K PRO restarts.</string>
+    <string name="settings_help_startup">What 8K PRO shows when it starts: Home, the channel you watched last, your favourites, or a channel you pick.</string>
+    <string name="settings_help_check_updates">Looks on GitHub for a newer 8K PRO now and offers to install it. Your playlists, favourites and settings stay as they are.</string>
+    <string name="settings_help_bg_background">Stage draws 8K PRO’s own soft colours. Picture shows a picture of yours behind every screen. Plain is a flat dark fill.</string>
+    <string name="settings_help_brand_accent">The 8K PRO logo in the menu, About and setup shows its play triangle in your accent colour. The icon on the home screen keeps its own colours.</string>
+    <string name="local_sync_browser_title">8K PRO local sync</string>
+    <string name="local_sync_browser_body">This address is for the 8K PRO app on your other device. Open Local sync there and pick this device from the list.</string>
+</resources>

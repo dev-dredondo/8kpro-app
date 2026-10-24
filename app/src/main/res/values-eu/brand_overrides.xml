@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO erabiltzailea</string>
+    <string name="content_exit_owntv">8K PRO itxi?</string>
+    <string name="content_storage_folder_fallback">Zure deskarga-karpeta ez dago eskuragarri oraintxe, beraz deskargak 8K PROren karpeta propioan gordetzen ari dira berriro eskuragarri egon arte.</string>
+    <string name="content_epg_own_player">8K PRO erreproduzigailua</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> prest dago (v<xliff:g id="current">%2$s</xliff:g> duzu).</string>
+    <string name="recovery_title">8K PROk ezin izan du bere datu-basea ireki</string>
+    <string name="settings_recording_timers_inexact">Gailu honek ez dio 8K PROri alarma zehatzak ezartzen uzten, beraz baliteke grabazio bat minutu batzuk berandu hastea. Grabazioak lehenago hasten dira hori konpentsatzeko.</string>
+    <string name="recording_failed_drm">Kanal hau DRM bidez babestuta dago, beraz ikusi daiteke baina ezin da grabatu. Babesa zure hornitzailearengandik dator, ez 8K PROtik.</string>
+    <string name="sports_alerts_when_closed">Alertak 8K PRO itxita dagoenean</string>
+    <string name="sports_alerts_footnote">8K PRO itxita dagoenean, alertak minutu batean iristen dira normalean. Telefonoa denbora luzez geldi eta pantaila itzalita egon bada, Androidek 15 minutu inguru atzera ditzake. Zuzeneko emaitza-txartela ez da atzeratzen.</string>
+    <string name="sports_no_playlist_body">Emaitzak, sailkapenak eta alertak gabe ere badabiltza. Zerrenda batekin, 8K PROk partida hau ematen duen kate oro aurkitzen du.</string>
+    <string name="sports_sport_buttons_description">Nire kirolak: zuk aukeratutakoa soilik. Kirol guztiak: 8K PRO-k ezagutzen dituen liga guztiak, kargatzeko denbora gehiago behar dute.</string>
+    <string name="player_trailer_blocked_title">Trailer hau ezin da ikusi 8K PRO-n</string>
+    <string name="settings_proxy_description">Bidali 8K PROren trafiko eta erreprodukzio guztia HTTP proxy baten bidez.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · konfiguraziorik gabe</string>
+    <string name="settings_open_subtitles_access_priority">Utzi bietan hutsik 8K PROren Worker partekatua erabiltzeko. Worker URL pertsonalizatu batek lehentasuna du zuzeneko API gako baten aurretik. Kontu-saioak profilarekiko espezifikoak izaten jarraitzen dute.</string>
+    <string name="settings_metadata_clear_advanced_message">Zure TMDB API gakoa eta auto-ostatatutako zerbitzariaren helbidea gailu honetatik ezabatuko dira, eta 8K PRO barneko zerbitzu partekatura itzuliko da bere eguneko kuotarekin.</string>
+    <string name="settings_metadata_fair_share">Barneko zerbitzua 8K PRO erabiltzen duten guztien artean partekatzen da. Minutuko, orduko edo eguneko kuota agortzen bada, TMDB xehetasunak pausatu egiten dira leiho hori berrezarri arte; erreprodukzio-zerrendako informazioak funtzionatzen jarraitzen du. Zure gakoak edo Workerrak kuota hau kentzen du.</string>
+    <string name="settings_auto_frame_rate_warning_description">Gailu honek Android <xliff:g id="android_version">%1$s</xliff:g> exekutatzen du. Android 12 baino lehenagoko bertsioetan telebistak ezin dio 8K PROri esan zein freskatze-maiztasunetara alda dezakeen leun, beraz maiztasuna aldatzeak pantaila segundo bat edo bi beltz utz dezake — batzuetan programa batean zehar behin baino gehiagotan.\n\nHemen Fotograma-maiztasun automatikoa desaktibatuta uztea gomendatzen dugu. Zure telebistak garbi aldatzen badu, aktibatu eta probatu: edonoiz alda dezakezu berriro.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">Gailu honek Android <xliff:g id="android_version">%1$s</xliff:g> exekutatzen du. Android 12 baino lehenagoko bertsioetan gailuak ezin dio 8K PROri esan zein freskatze-maiztasunetara alda dezakeen leun, beraz maiztasuna aldatzeak pantaila segundo bat edo bi beltz utz dezake — batzuetan programa batean zehar behin baino gehiagotan.\n\nHemen Fotograma-maiztasun automatikoa desaktibatuta uztea gomendatzen dugu. Zure pantailak garbi aldatzen badu, aktibatu eta probatu: edonoiz alda dezakezu berriro.</string>
+    <string name="settings_ffmpeg_audio_description">Aktibatuta: ExoPlayer-ek gailuak deskodetzailerik ez duen soinua ere deskodetu dezake, adibidez DTS, TrueHD edo MP2. Gailuaren deskodetzaileek lehentasuna dute oraindik. Desaktibatuta: ExoPlayer-ek gailuaren deskodetzaileak soilik erabiltzen ditu. mpv-k beti FFmpeg bidez deskodetzen du. Aldatzean 8K PRO berrabiarazten da.</string>
+    <string name="settings_ffmpeg_audio_restart_message">Audio-deskodetzailea 8K PRO berrabiarazi ondoren aldatzen da.</string>
+    <string name="settings_app_startup_description">Zer irekitzen duen 8K PROk abiatzean</string>
+    <string name="settings_restore_remote_description">Wi-Fi sare berean dagoen telefono, tableta edo ordenagailu batean, eskaneatu QRa (edo ireki URLa), idatzi PIN hau, aukeratu zure 8K PRO babeskopia-fitxategia eta sakatu Bidali telebistara. Ondoren, hemen aukeratuko duzu zer leheneratu.</string>
+    <string name="settings_catchup_player_internal">8K PRO erreproduzigailua</string>
+    <string name="settings_sources_probe_warning">Hornitzaile askok ez dute inoiz esaten zenbat kanal ikus ditzakezun aldi berean, beraz 8K PROk hainbat ireki eta zeintzuk irauten duten ikusiz jakiten du. Orain erreproduzitzen ari den guztia gelditu egingo da, eta honek bi minutu arte iraun dezake.</string>
+    <string name="settings_sources_probe_unknown">8K PROk ezin izan du jakin hornitzaile honek zenbat kanal onartzen dituen.</string>
+    <string name="settings_dns_toggle_description">Ebatzi 8K PROren domeinu-bilaketa guztiak DNS zerbitzari pertsonalizatu baten bidez.</string>
+    <string name="settings_live_tune_timeout_description">Zuzeneko kanal batek ordu honetarako irudirik erakutsi ez badu, 8K PROk saiatzeari uzten dio eta jakinarazten dizu, pantaila beltza utzi beharrean bere erreproduzigailu guztiak probatzen dituen bitartean. Inoiz ez saiatzen jarraitzen du, eta horrek minutu bat baino gehiago iraun dezake zure hornitzaileak kendu duen kanal batean. Hornitzaileak eskatutako itxaronaldiak ez dira kontatzen.</string>
+    <string name="settings_surround_forced_description">Surround — bidali Dolby/DTS benetako 5.1/7.1 hartzaile bati. Isildu edo eten-etenka egiten badu, 8K PROk estereora itzultzen da eta jakinarazten dizu.</string>
+    <string name="settings_language_help_translate">Lagundu 8K PRO zure hizkuntzara itzultzen</string>
+    <string name="settings_language_contribution_description">Eskaneatu QR kodea edo ireki esteka erabilgarri dagoen edozein hizkuntza aukeratzeko eta 8K PROren sei itzulpen-osagaietan guztietan laguntzeko.</string>
+    <string name="settings_language_contribution_qr_description">8K PRO itzulpen-proiektuaren ikuspegi orokorraren QR kodea</string>
+    <string name="local_sync_error_unreachable">Gailu hori ezin izan da atzitu. Bertan, ireki 8K PRO → Gehiago → Tokiko sinkronizazioa eta aktibatu Sinkronizazio modua. Bi gailuak Wi-Fi sare berean egon behar dute.</string>
+    <string name="settings_app_icon_summary">8K PROren ikonoaren eta logoaren kolorea</string>
+    <string name="settings_app_icon_sheet_mobile">Nola agertzen den 8K PRO hasierako pantailan. Aplikazioa behin berrabiaraziko da.</string>
+    <string name="app_icon_restart_title">8K PRO berrabiarazi?</string>
+    <string name="app_icon_restart_message">Ikono eta logo berri bat aukeratu duzu. 8K PRO berrabiarazi ondoren izango dute eragina.</string>
+    <string name="setup_disclaimer">8K PRO multimedia-erreproduzigailu hutsa da. Ez du kanalik, erreprodukzio-zerrendarik edo edukirik barne hartzen. Zure ardura da legez atzitu ditzakezun Xtream, M3U edo Stalker iturburuak gehitzea.</string>
+    <string name="setup_set_up_owntv">Konfiguratu 8K PRO</string>
+    <string name="setup_sync_device_description">Kopiatu dena zure beste 8K PRO gailutik Wi-Fi bidez</string>
+    <string name="setup_byo_source_description">8K PRO erreproduzigailua da — ekarri zure Xtream, M3U edo Stalker iturburua.</string>
+    <string name="companion_pin_page_title">8K PRO — Idatzi PINa</string>
+    <string name="companion_add_page_title">8K PRO — Gehitu iturburua</string>
+    <string name="companion_saved_page_title">8K PRO — Bidalita</string>
+    <string name="companion_backup_page_title">8K PRO — Leheneratu babeskopia</string>
+    <string name="companion_backup_description">Aukeratu 8K PRO babeskopia-fitxategi bat (.own, edo .json zaharrago bat) eta sakatu Bidali. Telebistara transferitzen da — hartu urrutiko agintea eta aukeratu bertan zer leheneratu.</string>
+    <string name="companion_image_page_title">8K PRO — Atzealdeko irudia</string>
+    <string name="companion_download_page_title">8K PRO — Deskargatu babeskopia</string>
+    <string name="companion_download_description">Zure telebistak 8K PRO babeskopia-fitxategi bat prestatu du. Sakatu botoia gailu honetan gordetzeko (owntv-backup.own). Gorde leku seguru batean — geroago leheneratu dezakezu.</string>
+    <string name="local_sync_browser_title">8K PRO tokiko sinkronizazioa</string>
+    <string name="local_sync_browser_body">Helbide hau zure beste gailuko 8K PRO aplikaziorako da. Ireki Tokiko sinkronizazioa bertan eta aukeratu gailu hau zerrendatik.</string>
+    <string name="setup_line_app_icon_mobile">Nola agertzen den 8K PRO hasierako pantailan</string>
+</resources>

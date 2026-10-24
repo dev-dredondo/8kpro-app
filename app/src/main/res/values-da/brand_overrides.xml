@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO-bruger</string>
+    <string name="content_exit_owntv">Afslut 8K PRO?</string>
+    <string name="content_storage_folder_fallback">Din downloadmappe er ikke tilgængelig lige nu, så downloads gemmes i 8K PRO\'s egen mappe, indtil den er tilbage.</string>
+    <string name="content_epg_own_player">8K PRO-afspiller</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> er klar (du har v<xliff:g id="current">%2$s</xliff:g>).</string>
+    <string name="recovery_title">8K PRO kunne ikke åbne sin database</string>
+    <string name="settings_recording_timers_inexact">Denne enhed tillader ikke 8K PRO at sætte præcise alarmer, så en optagelse kan starte et par minutter for sent. Optagelser starter tidligere for at opveje det.</string>
+    <string name="recording_failed_drm">Denne kanal er DRM-beskyttet, så den kan ses, men ikke optages. Beskyttelsen kommer fra din udbyder, ikke fra 8K PRO.</string>
+    <string name="sports_alerts_when_closed">Advarsler, når 8K PRO er lukket</string>
+    <string name="sports_alerts_footnote">Når 8K PRO er lukket, kommer advarsler normalt inden for et minut. Hvis telefonen har ligget stille med slukket skærm længe, kan Android holde dem tilbage i op til ca. 15 minutter. Live-resultatkortet holdes ikke tilbage.</string>
+    <string name="sports_no_playlist_body">Resultater, stillinger og advarsler virker uden. Med en playliste finder 8K PRO alle kanaler, der viser kampen.</string>
+    <string name="sports_sport_buttons_description">Mine sportsgrene: kun det, du har valgt. Alle sportsgrene: alle ligaer, 8K PRO kender, og det tager længere at indlæse.</string>
+    <string name="player_trailer_blocked_title">Denne trailer kan ikke afspilles i 8K PRO</string>
+    <string name="settings_proxy_description">Send al trafik og afspilning fra 8K PRO gennem en HTTP-proxy.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · ingen opsætning</string>
+    <string name="settings_metadata_clear_advanced_message">Din TMDB API-nøgle og adressen på din egen server slettes fra denne enhed, og 8K PRO vender tilbage til den indbyggede fælles tjeneste med dens daglige andel.</string>
+    <string name="settings_metadata_fair_share">Den indbyggede metadatatjeneste deles af alle, der bruger 8K PRO, så hver enhed får sin egen andel hver dag. Hvis du bruger din andel op, sættes plakater og beskrivelser på pause, indtil den fyldes op igen — oplysningerne fra din egen playliste fungerer som normalt. At tilføje din egen TMDB API-nøgle eller server fjerner grænsen: det er gratis, og en personlig nøgle har praktisk talt ingen grænse.</string>
+    <string name="settings_ffmpeg_audio_description">Til: ExoPlayer kan også afkode lyd, som enheden ikke har en dekoder til, f.eks. DTS, TrueHD eller MP2. Enhedens egne dekodere kommer stadig først. Fra: ExoPlayer bruger kun enhedens dekodere. mpv afkoder altid med FFmpeg. En ændring genstarter 8K PRO.</string>
+    <string name="settings_ffmpeg_audio_restart_message">Lyddekoderen skifter, når 8K PRO er genstartet.</string>
+    <string name="settings_app_startup_description">Hvad 8K PRO åbner ved start</string>
+    <string name="settings_open_subtitles_access_priority">Lad begge felter være tomme for at bruge 8K PRO’s delte Worker. En egen Worker-URL har forrang for en direkte API-nøgle. Kontosessioner er fortsat profilspecifikke.</string>
+    <string name="settings_restore_remote_description">På en vilkårlig enhed med browser på samme wi-fi – telefon, computer eller et andet tv – scan QR-koden (eller åbn URL’en), indtast denne PIN-kode, vælg din 8K PRO-sikkerhedskopi, og send den. Du vælger derefter her, hvad der skal gendannes.</string>
+    <string name="settings_catchup_player_internal">8K PRO-afspiller</string>
+    <string name="settings_sources_probe_warning">Mange udbydere oplyser aldrig, hvor mange kanaler du må se samtidig, så 8K PRO finder ud af det ved at åbne nogle stykker og se, hvilke der overlever. Alt, der afspilles nu, stopper, og det kan tage op til to minutter.</string>
+    <string name="settings_sources_probe_unknown">8K PRO kunne ikke finde ud af, hvor mange kanaler denne udbyder tillader.</string>
+    <string name="settings_dns_toggle_description">Foretag alle 8K PRO-domæneopslag via en brugerdefineret DNS-server.</string>
+    <string name="settings_live_tune_timeout_description">Hvis en live-kanal ikke har vist billede inden for denne tid, holder 8K PRO op med at prøve og siger det til dig i stedet for at efterlade en sort skærm, mens den arbejder sig gennem alle sine afspillere. “Aldrig” bliver ved med at prøve, hvilket kan tage langt over et minut på en kanal, din udbyder har fjernet. Ventetid, som udbyderen selv beder om, tælles ikke med.</string>
+    <string name="settings_surround_forced_description">Surround – send Dolby/DTS til en ægte 5.1/7.1-modtager. Hvis lyden forsvinder eller hakker, falder 8K PRO stadig tilbage til stereo og fortæller dig det.</string>
+    <string name="settings_language_help_translate">Hjælp med at oversætte 8K PRO til dit sprog</string>
+    <string name="settings_language_contribution_description">Scan QR-koden, eller åbn linket for at vælge et hvilket som helst tilgængeligt sprog og bidrage på tværs af alle seks 8K PRO-oversættelseskomponenter.</string>
+    <string name="settings_language_contribution_qr_description">QR-kode til 8K PRO-oversættelsesprojektets oversigt</string>
+    <string name="settings_auto_frame_rate_warning_description">Denne enhed kører Android <xliff:g id="android_version">%1$s</xliff:g>. Under Android 12 kan TV\'et ikke fortælle 8K PRO, hvilke opdateringshastigheder det kan skifte problemfrit imellem, så en ændring af hastigheden kan få skærmen til at blive sort i et sekund eller to — sommetider mere end én gang under et program.\n\nVi anbefaler at lade Auto-billedhastighed være slået fra her. Hvis dit TV skifter problemfrit, kan du slå det til og se: du kan altid skifte tilbage.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">Denne enhed kører Android <xliff:g id="android_version">%1$s</xliff:g>. Under Android 12 kan enheden ikke fortælle 8K PRO, hvilke opdateringshastigheder den kan skifte problemfrit imellem, så en ændring af hastigheden kan få skærmen til at blive sort i et sekund eller to — sommetider mere end én gang under et program.\n\nVi anbefaler at lade Auto-billedhastighed være slået fra her. Hvis din skærm skifter problemfrit, kan du slå det til og se: du kan altid skifte tilbage.</string>
+    <string name="local_sync_error_unreachable">Enheden kunne ikke nås. Åbn 8K PRO → Mere → Lokal synkronisering på den, og slå Synkroniseringstilstand til. Begge enheder skal være på samme Wi-Fi.</string>
+    <string name="settings_app_icon_summary">Farve på 8K PRO-ikonet og -logoet</string>
+    <string name="settings_app_icon_sheet_mobile">Sådan vises 8K PRO på din startskærm. Appen genstarter én gang.</string>
+    <string name="app_icon_restart_title">Genstart 8K PRO?</string>
+    <string name="app_icon_restart_message">Du har valgt et nyt ikon og logo. De træder i kraft, når 8K PRO genstartes.</string>
+    <string name="settings_help_theme">8K PRO er designet til mørk. System følger tv’ets egen indstilling, hvis den findes; lys passer til et lyst rum.</string>
+    <string name="settings_help_fonts">Skrifttypen i hele 8K PRO og tekstens størrelse. Pop op-vinduer bruger samme skrifttype.</string>
+    <string name="settings_help_app_icon">8K PRO-ikonet på tv’ets startskærm. Det kan tage et øjeblik, før startskærmen viser ændringen.</string>
+    <string name="settings_help_brand_accent">8K PRO-logoet i menuen, Om og opsætningen viser afspilningstrekanten i din accentfarve. Ikonet på startskærmen beholder sine egne farver.</string>
+    <string name="settings_help_startup">Hvad 8K PRO viser ved start: Hjem, den kanal, du så sidst, dine favoritter eller en kanal, du vælger.</string>
+    <string name="settings_help_check_updates">Søger nu på GitHub efter en nyere 8K PRO og tilbyder at installere den. Dine playlister, favoritter og indstillinger forbliver, som de er.</string>
+    <string name="settings_help_update_startup">Søger efter en ny version, hver gang 8K PRO starter, og fortæller dig, når der er en. Intet installeres uden at spørge.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">Sproget i alle menuer og beskeder i 8K PRO. <xliff:g id="count">%1$d</xliff:g> sprog; følger tv’ets eget sprog, indtil du vælger et.</item>
+        <item quantity="other">Sproget i alle menuer og beskeder i 8K PRO. <xliff:g id="count">%1$d</xliff:g> sprog; følger tv’ets eget sprog, indtil du vælger et.</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO følger tv’ets sprog (nu <xliff:g id="language">%1$s</xliff:g>). Vælg et nedenfor for kun at bruge det i 8K PRO.</string>
+    <string name="settings_language_pick_help">Brug <xliff:g id="language">%1$s</xliff:g> i 8K PRO, uanset tv’ets sprog.</string>
+    <string name="settings_help_bg_background">Stage viser 8K PROs egne bløde farver. Billede viser dit eget billede bag hver skærm. Ensfarvet er en flad mørk flade.</string>
+    <string name="setup_disclaimer">8K PRO er udelukkende en medieafspiller. Den indeholder ingen kanaler, afspilningslister eller noget indhold. Du er selv ansvarlig for at tilføje dine egne Xtream-, M3U- eller Stalker-kilder, som du har lovlig adgang til.</string>
+    <string name="setup_set_up_owntv">Konfigurer 8K PRO</string>
+    <string name="setup_sync_device_description">Kopiér alt fra din anden 8K PRO-enhed over Wi-Fi</string>
+    <string name="setup_byo_source_description">8K PRO er en afspiller — tilføj din egen Xtream-, M3U- eller Stalker-kilde.</string>
+    <string name="companion_pin_page_title">8K PRO — Indtast PIN</string>
+    <string name="companion_add_page_title">8K PRO — Tilføj kilde</string>
+    <string name="companion_saved_page_title">8K PRO — Sendt</string>
+    <string name="companion_backup_page_title">8K PRO — Gendan sikkerhedskopi</string>
+    <string name="companion_backup_description">Vælg en 8K PRO-sikkerhedskopifil (.own eller en ældre .json-fil), og tryk på Send. Den overføres til tv\'et — tag fjernbetjeningen, og vælg dér, hvad der skal gendannes.</string>
+    <string name="companion_image_page_title">8K PRO — Baggrundsbillede</string>
+    <string name="companion_download_page_title">8K PRO — Download sikkerhedskopi</string>
+    <string name="companion_download_description">Dit tv har klargjort en sikkerhedskopifil til 8K PRO. Tryk på knappen for at gemme den på denne enhed (owntv-backup.own). Opbevar den et sikkert sted — du kan gendanne fra den senere.</string>
+    <string name="local_sync_browser_title">8K PRO lokal synkronisering</string>
+    <string name="local_sync_browser_body">Denne adresse er til 8K PRO-appen på din anden enhed. Åbn Lokal synkronisering der, og vælg denne enhed på listen.</string>
+    <string name="setup_welcome_title">Velkommen til 8K PRO</string>
+    <string name="setup_line_app_icon">Sådan vises 8K PRO på tv’ets startskærm</string>
+    <string name="setup_line_app_icon_mobile">Sådan vises 8K PRO på din startskærm</string>
+</resources>

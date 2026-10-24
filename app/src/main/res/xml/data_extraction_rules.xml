@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Android 12+ (API 31+) data extraction rules. See backup_rules.xml for the full rationale.
+
+   TWO SEPARATE CHANNELS, and both must be closed:
+
+   - <cloud-backup>     Google Drive backup. Already disabled by `android:allowBackup="false"`;
+                        excluded here as well so the intent survives any future manifest edit.
+   - <device-transfer>  Device-to-device migration (new TV / phone setup). **This one is NOT
+                        covered by allowBackup="false"** — on Android 12+ D2D transfer runs even
+                        when cloud backup is off, so without these excludes the plaintext
+                        playlist/proxy passwords and API keys would still be copied to the new
+                        device without the user ever typing a backup password.
+
+   Users move OwnTV data with More → Backup & Restore, which is explicit and encryptable.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </device-transfer>
+</data-extraction-rules>

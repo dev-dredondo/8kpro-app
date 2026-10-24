@@ -1,0 +1,58 @@
+name: Release notes from CHANGELOG
+
+# When a release is published, set its body to that version's section from CHANGELOG.md
+# (the minimal, bullet-only changelog). The in-app updater reads the latest release body, so a
+# user updating from ANY older version sees exactly this version's short notes.
+#
+# Tag builds already set the same body in android.yml — a release published by GITHUB_TOKEN does
+# not trigger this workflow. This job covers releases published by hand from the GitHub UI.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  set-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the release tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Extract this version's section and update the release body
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [ ! -f CHANGELOG.md ]; then
+            echo "CHANGELOG.md not found at $TAG — leaving the release body unchanged."
+            exit 0
+          fi
+
+          # Pull lines from "## <TAG>" up to (but not including) the next "## v" header. The header
+          # may carry a date tail or none at all, so match the version as a whole word.
+          awk -v ver="$TAG" '
+            $0 ~ ("^## " ver "([ \t]|$)") { flag=1; next }
+            /^## v/ && flag { flag=0 }
+            flag { print }
+          ' CHANGELOG.md > section.md || true
+
+          # Trim leading/trailing blank lines.
+          sed -i -e '/./,$!d' section.md
+          awk 'NF{p=NR} {a[NR]=$0} END{for(i=1;i<=p;i++) print a[i]}' section.md > section.trimmed.md
+          mv section.trimmed.md section.md
+
+          if [ ! -s section.md ]; then
+            echo "No CHANGELOG.md section found for $TAG — leaving the release body unchanged."
+            exit 0
+          fi
+
+          echo "----- notes for $TAG -----"
+          cat section.md
+          echo "--------------------------"
+          gh release edit "$TAG" --notes-file section.md

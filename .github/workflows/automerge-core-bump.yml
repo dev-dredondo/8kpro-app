@@ -1,0 +1,80 @@
+name: Auto-merge core pin bumps
+
+# The core repository opens a "Pin core x.y.z" pull request here after every publish. It changes two
+# things and nothing else: `owntvCore` in the version catalogue, and the locale catalogue that is
+# deliberately duplicated from core. There is no core code in this repository to review, and the
+# maintainer has already been running that core locally through `owntv.corePath` — so a human merge
+# button adds a delay and no information.
+#
+# This merges those pull requests once every check on them is green. It is deliberately narrow:
+# the branch must be bump/core-*, the author must be the maintainer, and the diff must touch only
+# the two expected files. Anything else is left alone for a human.
+#
+# GitHub's own auto-merge is not used because it requires branch protection on main, which would
+# start rejecting the maintainer's direct pushes.
+#
+# One consequence worth knowing: a merge performed with GITHUB_TOKEN does not trigger workflows on
+# main, so there is no second CI run after the merge. That is acceptable here because the pin does
+# not change this repository's own code, and the maintainer has already built against that core.
+#
+# Only "Android CI" is watched, not i18n as well. Both workflows now skip every job on a bump branch
+# except android.yml's verify-pin, and a run whose jobs are ALL skipped concludes as "skipped", never
+# "success" — so the i18n run can no longer trigger anything here. Android CI's success on such a
+# branch means exactly one thing: verify-pin passed. That is the gate.
+
+on:
+  workflow_run:
+    workflows: [ "Android CI" ]
+    types: [ completed ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: automerge-core-bump
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge the pin bump once every check is green
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+
+          case "$HEAD_BRANCH" in
+            bump/core-*) ;;
+            *) echo "$HEAD_BRANCH is not a core pin bump — nothing to do."; exit 0 ;;
+          esac
+
+          NUMBER=$(gh pr list --repo "$REPO" --head "$HEAD_BRANCH" --state open \
+                     --json number,author,isDraft \
+                     -q '.[] | select(.author.login == "ahXN00" and .isDraft == false) | .number')
+          if [ -z "$NUMBER" ]; then
+            echo "No open, non-draft pin-bump pull request by the maintainer on $HEAD_BRANCH."
+            exit 0
+          fi
+
+          # The diff must be only the two files the bump workflow is allowed to touch. A pin bump
+          # that changed anything else did not come from that workflow, whatever the branch is called.
+          CHANGED=$(gh pr diff "$NUMBER" --repo "$REPO" --name-only | sort)
+          ALLOWED=$(printf '%s\n' "gradle/libs.versions.toml" "tools/i18n/locales.json" | sort)
+          if [ -n "$(comm -23 <(echo "$CHANGED") <(echo "$ALLOWED"))" ]; then
+            echo "::warning::PR #$NUMBER touches files outside the pin bump. Leaving it for a human."
+            printf '%s\n' "$CHANGED"
+            exit 0
+          fi
+
+          # No `gh pr checks` gate any more. It reported the deliberately skipped jobs as unfinished
+          # and would have held the pull request open for ever. The trigger condition on this
+          # workflow — Android CI concluded successfully on this branch — already means verify-pin
+          # passed, and on a bump branch verify-pin is the only job Android CI runs.
+
+          echo "Merging PR #$NUMBER."
+          gh pr merge "$NUMBER" --repo "$REPO" --merge --delete-branch

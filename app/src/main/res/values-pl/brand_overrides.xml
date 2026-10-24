@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">Użytkownik 8K PRO</string>
+    <string name="content_exit_owntv">Wyjść z 8K PRO?</string>
+    <string name="content_storage_folder_fallback">Folder pobierania jest teraz niedostępny, więc pobrane pliki są zapisywane we własnym folderze 8K PRO, dopóki nie wróci.</string>
+    <string name="content_epg_own_player">Odtwarzacz 8K PRO</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> jest gotowa (masz v<xliff:g id="current">%2$s</xliff:g>).</string>
+    <string name="recovery_title">8K PRO nie mogła otworzyć swojej bazy danych</string>
+    <string name="settings_recording_timers_inexact">To urządzenie nie pozwala aplikacji 8K PRO ustawiać dokładnych alarmów, więc nagranie może zacząć się kilka minut później. Nagrania startują wcześniej, aby to nadrobić.</string>
+    <string name="recording_failed_drm">Ten kanał jest chroniony przez DRM, więc można go oglądać, ale nie nagrywać. Ochronę stosuje Twój dostawca, a nie 8K PRO.</string>
+    <string name="sports_alerts_when_closed">Alerty przy zamkniętym 8K PRO</string>
+    <string name="sports_alerts_footnote">Przy zamkniętym 8K PRO alerty zwykle przychodzą w ciągu minuty. Jeśli telefon długo leży bez ruchu z wyłączonym ekranem, Android może je wstrzymać nawet na około 15 minut. Karta wyniku na żywo nie jest wstrzymywana.</string>
+    <string name="sports_no_playlist_body">Wyniki, tabele i alerty działają bez niej. Z playlistą 8K PRO znajdzie każdy kanał pokazujący ten mecz.</string>
+    <string name="sports_sport_buttons_description">Moje sporty: tylko to, co wybrano. Wszystkie sporty: każda liga znana 8K PRO, co wydłuża wczytywanie.</string>
+    <string name="player_trailer_blocked_title">Tego zwiastuna nie można odtworzyć w 8K PRO</string>
+    <string name="settings_proxy_description">Przesyłaj cały ruch 8K PRO i odtwarzanie przez serwer proxy HTTP.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · bez konfiguracji</string>
+    <string name="settings_metadata_clear_advanced_message">Twój klucz API TMDB i adres własnego serwera zostaną usunięte z tego urządzenia, a 8K PRO wróci do wbudowanej usługi współdzielonej z jej dziennym przydziałem.</string>
+    <string name="settings_metadata_fair_share">Wbudowana usługa metadanych jest współdzielona przez wszystkich użytkowników 8K PRO, więc każde urządzenie otrzymuje każdego dnia własny przydział. Po jego wyczerpaniu plakaty i opisy zostają wstrzymane do czasu odnowienia — informacje z Twojej własnej playlisty działają normalnie. Dodanie własnego klucza API TMDB lub serwera usuwa ten limit: jest bezpłatny, a klucz osobisty praktycznie nie ma limitu.</string>
+    <string name="settings_ffmpeg_audio_description">Włączone: ExoPlayer może też dekodować dźwięk, dla którego urządzenie nie ma dekodera, np. DTS, TrueHD lub MP2. Własne dekodery urządzenia nadal mają pierwszeństwo. Wyłączone: ExoPlayer używa tylko dekoderów urządzenia. mpv zawsze dekoduje przez FFmpeg. Zmiana uruchamia 8K PRO ponownie.</string>
+    <string name="settings_ffmpeg_audio_restart_message">Dekoder dźwięku zmieni się po ponownym uruchomieniu 8K PRO.</string>
+    <string name="settings_app_startup_description">Ekran otwierany przy uruchamianiu 8K PRO</string>
+    <string name="settings_open_subtitles_access_priority">Pozostaw oba pola puste, aby korzystać ze wspólnego Workera 8K PRO. Własny adres URL Workera ma pierwszeństwo przed bezpośrednim kluczem API. Sesje konta pozostają przypisane do profilu.</string>
+    <string name="settings_restore_remote_description">Na dowolnym urządzeniu z przeglądarką w tej samej sieci Wi-Fi — telefonie, komputerze lub innym telewizorze — zeskanuj kod QR (lub otwórz adres), wpisz ten PIN, wybierz plik kopii 8K PRO i wyślij go. Potem wybierzesz tutaj, co przywrócić.</string>
+    <string name="settings_catchup_player_internal">Odtwarzacz 8K PRO</string>
+    <string name="settings_sources_probe_warning">Wielu dostawców nigdy nie podaje, ile kanałów można oglądać jednocześnie, więc 8K PRO sprawdza to, otwierając kilka i obserwując, które przetrwają. Wszystko, co jest teraz odtwarzane, zostanie zatrzymane, a może to potrwać do dwóch minut.</string>
+    <string name="settings_sources_probe_unknown">8K PRO nie zdołał ustalić, ile kanałów dopuszcza ten dostawca.</string>
+    <string name="settings_dns_toggle_description">Wykonuj wszystkie zapytania DNS aplikacji 8K PRO za pośrednictwem niestandardowego serwera DNS.</string>
+    <string name="settings_live_tune_timeout_description">Jeśli w tym czasie kanał na żywo nie pokaże obrazu, 8K PRO przestanie próbować i powie Ci o tym, zamiast zostawiać czarny ekran, przechodząc po kolei przez wszystkie swoje odtwarzacze. „Nigdy” próbuje dalej, co na kanale usuniętym przez dostawcę może zająć znacznie ponad minutę. Oczekiwanie, o które prosi sam dostawca, nie jest wliczane.</string>
+    <string name="settings_surround_forced_description">Dźwięk przestrzenny — wysyłaj Dolby/DTS do prawdziwego amplitunera 5.1/7.1. Jeśli zrobi się cicho albo zacznie się zacinać, 8K PRO i tak wróci do stereo i poinformuje o tym.</string>
+    <string name="settings_language_help_translate">Pomóż przetłumaczyć 8K PRO na swój język</string>
+    <string name="settings_language_contribution_description">Zeskanuj kod QR lub otwórz link, aby wybrać dowolny dostępny język i wnieść wkład we wszystkich sześciu komponentach tłumaczeń 8K PRO.</string>
+    <string name="settings_language_contribution_qr_description">Kod QR do przeglądu projektu tłumaczeń 8K PRO</string>
+    <string name="settings_auto_frame_rate_warning_description">To urządzenie działa na Androidzie <xliff:g id="android_version">%1$s</xliff:g>. Na Androidzie poniżej 12 telewizor nie może przekazać 8K PRO, na które częstotliwości odświeżania może płynnie przełączać, więc zmiana częstotliwości może sprawić, że ekran zgaśnie na sekundę lub dwie — czasem więcej niż raz podczas programu.\n\nZalecamy pozostawienie tutaj automatycznej częstotliwości odświeżania wyłączonej. Jeśli telewizor przełącza ją bez zakłóceń, włącz ją i zobacz: w każdej chwili możesz ją z powrotem wyłączyć.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">To urządzenie działa na Androidzie <xliff:g id="android_version">%1$s</xliff:g>. Na Androidzie poniżej 12 urządzenie nie może przekazać 8K PRO, na które częstotliwości odświeżania może płynnie przełączać, więc zmiana częstotliwości może sprawić, że ekran zgaśnie na sekundę lub dwie — czasem więcej niż raz podczas programu.\n\nZalecamy pozostawienie tutaj automatycznej częstotliwości odświeżania wyłączonej. Jeśli ekran przełącza ją bez zakłóceń, włącz ją i zobacz: w każdej chwili możesz ją z powrotem wyłączyć.</string>
+    <string name="local_sync_error_unreachable">Nie udało się połączyć z tym urządzeniem. Otwórz na nim 8K PRO → Więcej → Synchronizacja lokalna i włącz Tryb synchronizacji. Oba urządzenia muszą być w tej samej sieci Wi-Fi.</string>
+    <string name="settings_app_icon_summary">Kolor ikony i logo 8K PRO</string>
+    <string name="settings_app_icon_sheet_mobile">Jak 8K PRO wygląda na Twoim ekranie głównym. Aplikacja uruchomi się ponownie raz.</string>
+    <string name="app_icon_restart_title">Uruchomić ponownie 8K PRO?</string>
+    <string name="app_icon_restart_message">Wybrano nową ikonę i logo. Zostaną zastosowane po ponownym uruchomieniu 8K PRO.</string>
+    <string name="settings_help_theme">8K PRO jest zaprojektowany z myślą o ciemnym motywie. Systemowy wybiera ustawienie telewizora, jeśli je ma; jasny pasuje do jasnego pokoju.</string>
+    <string name="settings_help_fonts">Czcionka używana w całym 8K PRO i rozmiar tekstu. Okienka używają tej samej czcionki.</string>
+    <string name="settings_help_app_icon">Ikona 8K PRO na ekranie głównym telewizora. Launcher może potrzebować chwili, aby pokazać zmianę.</string>
+    <string name="settings_help_brand_accent">Logo 8K PRO w menu, w sekcji Informacje i w konfiguracji pokazuje trójkąt odtwarzania w Twoim kolorze akcentu. Ikona na ekranie głównym zachowuje swoje kolory.</string>
+    <string name="settings_help_startup">Co 8K PRO pokazuje po uruchomieniu: stronę główną, ostatnio oglądany kanał, ulubione lub wybrany kanał.</string>
+    <string name="settings_help_check_updates">Sprawdza teraz na GitHubie, czy jest nowsza wersja 8K PRO, i proponuje instalację. Playlisty, ulubione i ustawienia pozostają bez zmian.</string>
+    <string name="settings_help_update_startup">Przy każdym uruchomieniu 8K PRO szuka nowej wersji i informuje, gdy jest dostępna. Nic nie jest instalowane bez pytania.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">Język wszystkich menu i komunikatów w 8K PRO. <xliff:g id="count">%1$d</xliff:g> język; dopóki nie wybierzesz, obowiązuje język telewizora.</item>
+        <item quantity="few">Język wszystkich menu i komunikatów w 8K PRO. <xliff:g id="count">%1$d</xliff:g> języki; dopóki nie wybierzesz, obowiązuje język telewizora.</item>
+        <item quantity="many">Język wszystkich menu i komunikatów w 8K PRO. <xliff:g id="count">%1$d</xliff:g> języków; dopóki nie wybierzesz, obowiązuje język telewizora.</item>
+        <item quantity="other">Język wszystkich menu i komunikatów w 8K PRO. <xliff:g id="count">%1$d</xliff:g> języków; dopóki nie wybierzesz, obowiązuje język telewizora.</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO używa języka telewizora (teraz <xliff:g id="language">%1$s</xliff:g>). Wybierz poniżej język, aby używać go tylko w 8K PRO.</string>
+    <string name="settings_language_pick_help">Używaj języka <xliff:g id="language">%1$s</xliff:g> w 8K PRO, niezależnie od języka telewizora.</string>
+    <string name="settings_help_bg_background">Stage pokazuje własne łagodne kolory 8K PRO. Obraz pokazuje Twój obraz za każdym ekranem. Gładkie to płaskie ciemne tło.</string>
+    <string name="setup_disclaimer">8K PRO jest wyłącznie odtwarzaczem multimedialnym. Nie zawiera żadnych kanałów, list odtwarzania ani treści. Odpowiadasz za dodawanie własnych, legalnie dostępnych źródeł Xtream, M3U lub Stalker.</string>
+    <string name="setup_set_up_owntv">Skonfiguruj 8K PRO</string>
+    <string name="setup_sync_device_description">Skopiuj wszystko z drugiego urządzenia 8K PRO przez Wi-Fi</string>
+    <string name="setup_byo_source_description">8K PRO jest odtwarzaczem — dodaj własne źródło Xtream, M3U lub Stalker.</string>
+    <string name="companion_pin_page_title">8K PRO — wpisz PIN</string>
+    <string name="companion_add_page_title">8K PRO — dodaj źródło</string>
+    <string name="companion_saved_page_title">8K PRO — wysłano</string>
+    <string name="companion_backup_page_title">8K PRO — przywróć kopię zapasową</string>
+    <string name="companion_backup_description">Wybierz plik kopii zapasowej 8K PRO (.own lub starszy .json) i naciśnij Wyślij. Zostanie przesłany do telewizora — weź pilot i wybierz tam elementy, które chcesz przywrócić.</string>
+    <string name="companion_image_page_title">8K PRO — obraz tła</string>
+    <string name="companion_download_page_title">8K PRO — pobierz kopię zapasową</string>
+    <string name="companion_download_description">Telewizor przygotował plik kopii zapasowej 8K PRO. Dotknij przycisku, aby zapisać go na tym urządzeniu (owntv-backup.own). Przechowuj go w bezpiecznym miejscu — później możesz z niego przywrócić dane.</string>
+    <string name="local_sync_browser_title">Synchronizacja lokalna 8K PRO</string>
+    <string name="local_sync_browser_body">Ten adres jest dla aplikacji 8K PRO na drugim urządzeniu. Otwórz tam Synchronizację lokalną i wybierz to urządzenie z listy.</string>
+    <string name="setup_welcome_title">Witamy w 8K PRO</string>
+    <string name="setup_line_app_icon">Jak 8K PRO wygląda na ekranie głównym telewizora</string>
+    <string name="setup_line_app_icon_mobile">Jak 8K PRO wygląda na Twoim ekranie głównym</string>
+</resources>

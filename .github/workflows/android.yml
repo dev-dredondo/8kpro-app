@@ -1,0 +1,336 @@
+name: Android CI
+
+# Three jobs:
+#   verify-pin — core pin bumps ONLY. Seconds, no build. See its own note.
+#   check      — unit tests + lint. Gates the build. Skipped on core pin bumps.
+#   build      — assembles the APK, and publishes a GitHub Release on v* tags. Never runs for a PR,
+#                so PR branches still don't produce APKs (the restriction added in ac33c65 is
+#                unchanged); they only get the test/lint verdict.
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # required so tag builds can create a Release
+
+# Core (tv.own.owntv:core, :player-core) and the mpv engine (tv.own.owntv:libmpv) resolve from OwnTV's
+# public Maven repository, https://ahxn00.github.io/OwnTV_Core/maven — no token, so fork pull requests
+# build exactly like the maintainer's. There is no owntv.corePath here: CI deliberately builds against
+# the PINNED artifact, which is what a release actually ships. Local builds use the composite.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # A "Pin core x.y.z" pull request opened by core's bump-consumers workflow changes exactly two
+  # files and no application code. Running the unit tests, lint and the i18n checks on it re-verifies
+  # this repo's Kotlin, which is byte-identical to main — minutes of runner time that cannot report
+  # anything new. So those jobs step aside for these branches and this one runs instead.
+  #
+  # It also keeps the workflow run itself concluding "success". A run whose every job is skipped
+  # concludes as "skipped", and automerge-core-bump.yml requires success — skip everything and the
+  # pull request would sit open for ever.
+  #
+  # What is actually worth checking on such a pull request is that the numbers agree: seconds, no
+  # build, no Gradle, no Android SDK.
+  verify-pin:
+    if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'bump/core-') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: The pin must be core's newest release, and locales.json must match it
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+
+          PIN=$(sed -n 's/^owntvCore = "\(.*\)"$/\1/p' gradle/libs.versions.toml)
+          [ -n "$PIN" ] || { echo "::error::Could not read owntvCore from gradle/libs.versions.toml."; exit 1; }
+
+          # The branch name carries the version too, so a mismatch means the two halves of the bump
+          # disagree about what is being pinned.
+          if [ "$HEAD_BRANCH" != "bump/core-$PIN" ]; then
+            echo "::error::Branch $HEAD_BRANCH does not match the pin $PIN."
+            exit 1
+          fi
+
+          # Core publishes the release only AFTER its tests pass and both artifacts are pushed, so a
+          # release existing is proof the version is real and installable.
+          LATEST=$(gh api repos/ahXN00/OwnTV_Core/releases/latest --jq .tag_name)
+          LATEST="${LATEST#core-}"
+          if [ "$PIN" != "$LATEST" ]; then
+            echo "::error::Pinned $PIN but core's newest release is $LATEST."
+            exit 1
+          fi
+
+          # The other file the bump touches. It is duplicated into every consumer because Gradle
+          # reads it at configure time to build localeFilters, and core's own copy never reaches
+          # here. A stale copy silently strips a language out of the APK with a green build.
+          curl -fsSL -o /tmp/locales.core.json \
+            "https://raw.githubusercontent.com/ahXN00/OwnTV_Core/core-$PIN/tools/i18n/locales.json"
+          if ! diff -u /tmp/locales.core.json tools/i18n/locales.json; then
+            echo "::error::tools/i18n/locales.json differs from core's copy at core-$PIN."
+            exit 1
+          fi
+
+          echo "Pin $PIN is core's newest release, the branch agrees, and locales.json matches."
+
+  # Nothing was checking the unit tests or lint before, so both could rot silently while the APK
+  # kept building. This job is the gate: if it is red, no APK is produced and no release is cut.
+  check:
+    # Core pin bumps carry no application code — verify-pin above covers them instead.
+    if: ${{ !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'bump/core-')) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          # 'tools' is obsolete and Google removed it from the SDK repository; the
+          # action still asks for it by default, which fails the whole setup step.
+          packages: 'platform-tools'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # One variant, not `test`/`lint` across every flavor: standard+debug is the variant the JVM
+      # tests are written against, and the ABI flavors differ only in the packaged native libs.
+      - name: Unit tests
+        run: |
+          chmod +x ./gradlew
+          ./gradlew testStandardDebugUnitTest --stacktrace
+
+      # abortOnError = true in app/build.gradle.kts, so this fails the job on a lint error.
+      - name: Lint
+        if: always()   # report both verdicts in one run instead of one failure at a time
+        run: ./gradlew lintStandardDebug --stacktrace
+
+      - name: Upload test and lint reports
+        if: always()   # the reports matter most when the step above failed
+        uses: actions/upload-artifact@v7
+        with:
+          name: check-reports
+          path: |
+            app/build/reports/tests/**
+            app/build/reports/lint-results-*.html
+            app/build/reports/lint-results-*.txt
+          if-no-files-found: warn
+
+  build:
+    needs: check
+    # PRs get the check job only — no APK, no release. Unchanged from ac33c65.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      IS_TAG: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      # Set at runtime via $GITHUB_ENV in the "Name the APK" step. Declared here (empty) so static
+      # linters don't flag the later ${{ env.APK_OUT }} references as "context access might be invalid".
+      APK_OUT: ""
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'   # matches gradle/gradle-daemon-jvm.properties (toolchainVersion=21)
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          # 'tools' is obsolete and Google removed it from the SDK repository; the
+          # action still asks for it by default, which fails the whole setup step.
+          packages: 'platform-tools'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Compute version (from the git tag on releases)
+        id: ver
+        run: |
+          if [ "$IS_TAG" = "true" ]; then
+            NAME="${GITHUB_REF_NAME#v}"                 # tag v1.2.0 -> 1.2.0
+            IFS='.' read -r MA MI PA <<< "$NAME"
+            CODE=$(( ${MA:-0} * 10000 + ${MI:-0} * 100 + ${PA:-0} ))   # 1.2.0 -> 10200
+            [ "$CODE" -gt 0 ] || CODE=1
+          else
+            # Dev (non-tag) builds mirror the local-build fallback in app/build.gradle.kts:
+            # pinned HIGH so a dev APK always installs over any published release
+            # (no INSTALL_FAILED_VERSION_DOWNGRADE) and the in-app updater stays quiet.
+            NAME="99.99.99"
+            CODE=99999
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "Version: $NAME (code $CODE)"
+
+      - name: Decode signing keystore (if configured)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          # Runs on every push (not just tags) so dev builds are also signed RELEASE builds —
+          # required since R8 was enabled: only assembleRelease exercises shrinking/keep rules,
+          # and a release-signed dev APK installs straight over a published release for testing.
+          # Fork PRs have no secrets, so they fall back to a debug build below.
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+            echo "Release signing configured."
+          else
+            echo "No KEYSTORE_BASE64 secret set — building a debug-signed APK."
+          fi
+
+      # Derives this release's edge key for the default metadata/subtitle service. Falls back to the
+      # static OWNTV_EDGE_KEY, then to "" — a fork has neither secret and the app uses its open base
+      # URL, exactly as before.
+      - name: Derive the release edge key
+        env:
+          OWNTV_EDGE_MASTER: ${{ secrets.OWNTV_EDGE_MASTER }}
+          OWNTV_EDGE_KEY: ${{ secrets.OWNTV_EDGE_KEY }}
+          VERSION_NAME: ${{ steps.ver.outputs.name }}
+        run: |
+          if [ -n "$OWNTV_EDGE_MASTER" ]; then
+            # No trailing newline in the input; the server derives it the same way.
+            KEY=$(printf '%s' "$VERSION_NAME" \
+              | openssl dgst -sha256 -hmac "$OWNTV_EDGE_MASTER" -hex \
+              | awk '{print $NF}')
+            echo "::add-mask::$KEY"
+            echo "OWNTV_EDGE_KEY=$KEY" >> "$GITHUB_ENV"
+            echo "Derived the edge key for $VERSION_NAME."
+          elif [ -n "$OWNTV_EDGE_KEY" ]; then
+            echo "::add-mask::$OWNTV_EDGE_KEY"
+            echo "OWNTV_EDGE_KEY=$OWNTV_EDGE_KEY" >> "$GITHUB_ENV"
+            echo "No OWNTV_EDGE_MASTER — using the static edge key."
+          else
+            echo "No edge secret configured (fork build) — the app will use the unprotected base URL."
+          fi
+
+      - name: Build APK
+        env:
+          VERSION_NAME: ${{ steps.ver.outputs.name }}
+          VERSION_CODE: ${{ steps.ver.outputs.code }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          # OWNTV_EDGE_KEY is exported into $GITHUB_ENV by the step above; app/build.gradle.kts reads
+          # it as the env var it always did.
+        run: |
+          chmod +x ./gradlew
+          if [ -n "$KEYSTORE_FILE" ]; then
+            echo "Building signed release APKs (both ABI flavors)"
+            ./gradlew assembleRelease --stacktrace
+            # Product flavors split the output by flavor subfolder:
+            #   standard/release  -> arm (arm64-v8a + armeabi-v7a) — the main download
+            #   x86_64/release    -> x86_64 — emulator / rare x86 box
+            ARM_SRC=$(ls app/build/outputs/apk/standard/release/*.apk | head -n1)
+            X86_SRC=$(ls app/build/outputs/apk/x86_64/release/*.apk | head -n1)
+            echo "Built arm:    $ARM_SRC"
+            echo "Built x86_64: $X86_SRC"
+            echo "ARM_SRC=$ARM_SRC" >> "$GITHUB_ENV"
+            echo "X86_SRC=$X86_SRC" >> "$GITHUB_ENV"
+          else
+            echo "Building debug APK"
+            ./gradlew assembleDebug
+            # Debug also builds both flavors; standard (arm) is the one most likely to be tested on a
+            # real device. Surface it as the primary artifact; x86_64 debug is still in its folder.
+            SRC=$(ls app/build/outputs/apk/standard/debug/*.apk | head -n1)
+            echo "Built: $SRC"
+            echo "ARM_SRC=$SRC" >> "$GITHUB_ENV"
+          fi
+
+      - name: Name the APK (OwnTV-v<version>)
+        run: |
+          mkdir -p dist
+          if [ "$IS_TAG" = "true" ]; then
+            OUT="OwnTV-v${{ steps.ver.outputs.name }}.apk"
+          else
+            OUT="OwnTV-dev-${GITHUB_SHA::7}.apk"
+          fi
+          cp "$ARM_SRC" "dist/$OUT"
+          echo "APK_OUT=$OUT" >> "$GITHUB_ENV"
+          echo "Packaged dist/$OUT (arm: arm64-v8a + armeabi-v7a)"
+          # Tag builds also ship a stable-named copy so a fixed URL always serves the latest signed
+          # release: https://github.com/<repo>/releases/latest/download/OwnTV.apk
+          # (used by the Fire TV Downloader code and any "always-latest" sideload link).
+          if [ "$IS_TAG" = "true" ]; then
+            cp "$ARM_SRC" "dist/OwnTV.apk"
+            # Separate x86_64 build for emulators / rare Intel boxes. Pinned to the version only —
+            # no always-latest copy, since real devices (the Downloader audience) don't need it.
+            if [ -n "$X86_SRC" ]; then
+              cp "$X86_SRC" "dist/OwnTV-x86_64-v${{ steps.ver.outputs.name }}.apk"
+              echo "Packaged dist/OwnTV-x86_64-v${{ steps.ver.outputs.name }}.apk"
+            fi
+          fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          # Upload the whole dist/ so both the arm APK and the x86_64 APK are captured.
+          name: ${{ env.APK_OUT }}
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Extract release notes from CHANGELOG.md
+        if: env.IS_TAG == 'true'
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          # The release body is what the in-app updater shows as "What's new", so it must be the
+          # SHORT, bullet-only notes from CHANGELOG.md (the only changelog; detail lives in commits).
+          #
+          # This runs here rather than only in release-notes.yml because a release published by
+          # GITHUB_TOKEN does not trigger other workflows, so that job never fires for tag builds.
+          # It stays as a fallback for releases published by hand from the GitHub UI.
+          #
+          # Take "## <tag>" up to the next "## v" header; the header may carry a date/"unreleased"
+          # tail ("## v4.1.5 — 2026-07-26") or nothing at all, so match the version as a whole word.
+          if [ -f CHANGELOG.md ]; then
+            awk -v ver="$TAG" '
+              $0 ~ ("^## " ver "([ \t]|$)") { flag=1; next }
+              /^## v/ && flag { flag=0 }
+              flag { print }
+            ' CHANGELOG.md > dist/RELEASE_NOTES.md || true
+            # Trim leading/trailing blank lines.
+            sed -i -e '/./,$!d' dist/RELEASE_NOTES.md
+            awk 'NF{p=NR} {a[NR]=$0} END{for(i=1;i<=p;i++) print a[i]}' \
+              dist/RELEASE_NOTES.md > dist/RELEASE_NOTES.trimmed.md
+            mv dist/RELEASE_NOTES.trimmed.md dist/RELEASE_NOTES.md
+          fi
+          if [ ! -s dist/RELEASE_NOTES.md ]; then
+            echo "::warning::No CHANGELOG.md section for $TAG — publishing a placeholder body."
+            echo "See the commits for $TAG for details." \
+              > dist/RELEASE_NOTES.md
+          fi
+          echo "--- Release notes ---"
+          cat dist/RELEASE_NOTES.md
+
+      - name: Publish GitHub Release
+        if: env.IS_TAG == 'true'
+        uses: softprops/action-gh-release@v3
+        with:
+          name: OwnTV ${{ github.ref_name }}
+          files: |
+            dist/${{ env.APK_OUT }}
+            dist/OwnTV.apk
+            dist/OwnTV-x86_64-v${{ steps.ver.outputs.name }}.apk
+          body_path: dist/RELEASE_NOTES.md
+          # Must stay false: it appends GitHub's auto commit/PR list under the body, which buries the
+          # short in-app notes the updater dialog shows.
+          generate_release_notes: false

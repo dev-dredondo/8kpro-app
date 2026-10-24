@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO 使用者</string>
+    <string name="content_exit_owntv">要結束 8K PRO 嗎？</string>
+    <string name="content_storage_folder_fallback">下載資料夾目前無法使用，因此在它恢復之前，下載內容會儲存到 8K PRO 自己的資料夾。</string>
+    <string name="content_epg_own_player">8K PRO 播放器</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> 已準備就緒（目前為 v<xliff:g id="current">%2$s</xliff:g>）。</string>
+    <string name="recovery_title">8K PRO 無法開啟其資料庫</string>
+    <string name="settings_recording_timers_inexact">本裝置不允許 8K PRO 設定精確鬧鐘，因此錄影可能會晚幾分鐘開始。錄影會提早啟動以作彌補。</string>
+    <string name="recording_failed_drm">此頻道受 DRM 保護，可以觀看但無法錄製。此保護來自你的服務供應商，而非 8K PRO。</string>
+    <string name="sports_alerts_when_closed">8K PRO 關閉時也提醒</string>
+    <string name="sports_alerts_footnote">8K PRO 關閉時，提醒通常在一分鐘內送達。若手機長時間靜置且螢幕關閉，Android 可能會延遲最多約 15 分鐘。即時比分卡片不受影響。</string>
+    <string name="sports_no_playlist_body">沒有播放清單也能查看比分、積分榜和提醒。新增後，8K PRO 會找出播出這場比賽的所有頻道。</string>
+    <string name="sports_sport_buttons_description">我的運動：僅你選擇的內容。全部運動：8K PRO 已知的所有聯賽，載入時間更長。</string>
+    <string name="player_trailer_blocked_title">此預告片無法在 8K PRO 中播放</string>
+    <string name="settings_proxy_description">透過 HTTP 代理伺服器傳送所有 8K PRO 流量及播放內容。</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · 無需設定</string>
+    <string name="settings_metadata_clear_advanced_message">你的 TMDB API 金鑰與自有伺服器位址將從此裝置刪除，8K PRO 將回到帶有每日額度的內建共用服務。</string>
+    <string name="settings_metadata_fair_share">內建中繼資料服務由所有 8K PRO 使用者共用，因此每部裝置每天都有自己的額度。用完額度後，海報與簡介會暫停顯示，直到額度恢復；播放清單自帶的資訊不受影響。加入你自己的 TMDB API 金鑰或伺服器即可解除此限制：它是免費的，而且個人金鑰幾乎沒有限制。</string>
+    <string name="settings_ffmpeg_audio_description">開啟：ExoPlayer 也能解碼裝置沒有解碼器的音訊，例如 DTS、TrueHD 或 MP2。裝置本身的解碼器仍然優先。關閉：ExoPlayer 只使用裝置的解碼器。mpv 一律使用 FFmpeg 解碼。變更後 8K PRO 會重新啟動。</string>
+    <string name="settings_ffmpeg_audio_restart_message">音訊解碼器會在 8K PRO 重新啟動後切換。</string>
+    <string name="settings_app_startup_description">8K PRO 啟動時開啟的內容</string>
+    <string name="settings_open_subtitles_access_priority">兩項都留空即使用 8K PRO 的共用 Worker。自訂 Worker 網址優先於直接填寫的 API 金鑰。帳號登入狀態仍依設定檔分別儲存。</string>
+    <string name="settings_restore_remote_description">在同一 Wi-Fi 下任何有瀏覽器的裝置（手機、電腦或另一台電視）上掃描 QR 碼（或開啟網址），輸入此 PIN，選擇你的 8K PRO 備份檔案並傳送。接著在這裡選擇要還原的內容。</string>
+    <string name="settings_catchup_player_internal">8K PRO 播放器</string>
+    <string name="settings_sources_probe_warning">許多供應商從不說明你可以同時觀看多少個頻道，因此 8K PRO 會開啟幾個頻道，看看哪些能持續播放來判斷。目前正在播放的內容會停止，此過程最多需要兩分鐘。</string>
+    <string name="settings_sources_probe_unknown">8K PRO 無法判斷此供應商允許多少個頻道。</string>
+    <string name="settings_dns_toggle_description">透過自訂 DNS 伺服器解析 8K PRO 的所有網域查詢。</string>
+    <string name="settings_live_tune_timeout_description">若直播頻道在此時間內仍未出現畫面，8K PRO 會停止嘗試並告知你，而不是一邊逐一試遍所有播放器、一邊留著黑畫面。選擇「永不」會一直嘗試，在供應商已下架的頻道上可能遠超過一分鐘。供應商自己要求的等待時間不計入其中。</string>
+    <string name="settings_surround_forced_description">環繞音效 — 將 Dolby/DTS 傳送至實體的 5.1/7.1 環繞擴大機。如果出現無聲或卡頓，8K PRO 仍會自動切回立體聲並通知你。</string>
+    <string name="settings_language_help_translate">協助將 8K PRO 翻譯成你的語言</string>
+    <string name="settings_language_contribution_description">掃描 QR Code 或開啟連結，即可選擇任何可用語言，並在 8K PRO 全部六個翻譯元件中貢獻翻譯。</string>
+    <string name="settings_language_contribution_qr_description">8K PRO 翻譯專案總覽的 QR Code</string>
+    <string name="settings_auto_frame_rate_warning_description">此裝置執行的是 Android <xliff:g id="android_version">%1$s</xliff:g>。在 Android 12 以下，電視無法告知 8K PRO 它可以順暢切換到哪些更新率，因此切換更新率可能會讓畫面變黑一兩秒——有時在節目播放期間還會發生不只一次。\n\n我們建議在此保持自動更新率關閉。如果你的電視切換得很順暢，不妨開啟試試看：你隨時都可以改回來。</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">此裝置執行的是 Android <xliff:g id="android_version">%1$s</xliff:g>。在 Android 12 以下，裝置無法告知 8K PRO 它可以順暢切換到哪些更新率，因此切換更新率可能會讓畫面變黑一兩秒——有時在節目播放期間還會發生不只一次。\n\n我們建議在此保持自動更新率關閉。如果你的螢幕切換得很順暢，不妨開啟試試看：你隨時都可以改回來。</string>
+    <string name="local_sync_error_unreachable">無法連線到該裝置。請在那部裝置上開啟 8K PRO → 更多 → 本機同步，並開啟同步模式。兩部裝置必須連線同一個 Wi-Fi。</string>
+    <string name="settings_app_icon_summary">8K PRO 圖示和標誌的顏色</string>
+    <string name="settings_app_icon_sheet_mobile">8K PRO 在主畫面上的樣子。應用程式會重新啟動一次。</string>
+    <string name="app_icon_restart_title">要重新啟動 8K PRO 嗎？</string>
+    <string name="app_icon_restart_message">你選擇了新的圖示和標誌，重新啟動 8K PRO 後生效。</string>
+    <string name="settings_help_theme">8K PRO 是為深色主題設計的。「系統」在電視有相應設定時跟隨電視；淺色適合明亮的房間。</string>
+    <string name="settings_help_fonts">8K PRO 全域使用的字型，以及文字顯示的大小。彈出視窗也使用同一字型。</string>
+    <string name="settings_help_app_icon">電視主畫面上的 8K PRO 圖示。啟動器可能需要片刻才會顯示變更。</string>
+    <string name="settings_help_brand_accent">選單、關於和設定精靈中的 8K PRO 標誌會以你的強調色顯示播放三角形。主畫面上的圖示保持原有顏色。</string>
+    <string name="settings_help_startup">8K PRO 啟動時顯示的內容：首頁、上次觀看的頻道、你的收藏，或你指定的頻道。</string>
+    <string name="settings_help_check_updates">立即在 GitHub 上尋找較新的 8K PRO 並提示安裝。你的播放清單、收藏和設定都會保留。</string>
+    <string name="settings_help_update_startup">每次啟動 8K PRO 時尋找新版本，有新版本時會告訴你。未經詢問不會安裝任何內容。</string>
+    <plurals name="settings_help_language">
+        <item quantity="other">8K PRO 所有選單和訊息使用的語言。支援 <xliff:g id="count">%1$d</xliff:g> 種語言；在你選擇之前跟隨電視本身的語言。</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO 跟隨電視語言（目前為 <xliff:g id="language">%1$s</xliff:g>）。在下方選擇一種語言，只在 8K PRO 中使用。</string>
+    <string name="settings_language_pick_help">在 8K PRO 中使用 <xliff:g id="language">%1$s</xliff:g>，不受電視語言影響。</string>
+    <string name="settings_help_bg_background">Stage 顯示 8K PRO 自帶的柔和色彩。圖片會在每個畫面後方顯示你自己的圖片。純色是平整的深色填滿。</string>
+    <string name="setup_disclaimer">8K PRO 僅為媒體播放器，不包含任何頻道、播放清單或內容。您有責任自行新增可合法存取的 Xtream、M3U 或 Stalker 來源。</string>
+    <string name="setup_set_up_owntv">設定 8K PRO</string>
+    <string name="setup_sync_device_description">透過 Wi-Fi 從你的另一部 8K PRO 裝置複製所有內容</string>
+    <string name="setup_byo_source_description">8K PRO 是一款播放器，請自行提供 Xtream、M3U 或 Stalker 來源。</string>
+    <string name="companion_pin_page_title">8K PRO — 輸入 PIN</string>
+    <string name="companion_add_page_title">8K PRO — 新增來源</string>
+    <string name="companion_saved_page_title">8K PRO — 已傳送</string>
+    <string name="companion_backup_page_title">8K PRO — 還原備份</string>
+    <string name="companion_backup_description">選擇 8K PRO 備份檔案（.own 或較舊的 .json）並按下「傳送」。檔案會傳輸至電視，請拿起遙控器並在電視上選擇要還原的內容。</string>
+    <string name="companion_image_page_title">8K PRO — 背景圖片</string>
+    <string name="companion_download_page_title">8K PRO — 下載備份</string>
+    <string name="companion_download_description">您的電視已準備好 8K PRO 備份檔案。點選按鈕，將檔案儲存到此裝置（owntv-backup.own）。請妥善保管，之後可用它進行還原。</string>
+    <string name="local_sync_browser_title">8K PRO 本機同步</string>
+    <string name="local_sync_browser_body">此位址供你另一部裝置上的 8K PRO 應用程式使用。請在那裡開啟「本機同步」，並從清單中選擇本機。</string>
+    <string name="setup_welcome_title">歡迎使用 8K PRO</string>
+    <string name="setup_line_app_icon">8K PRO 在電視主畫面上的樣子</string>
+    <string name="setup_line_app_icon_mobile">8K PRO 在主畫面上的樣子</string>
+</resources>

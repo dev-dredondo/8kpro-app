@@ -1,0 +1,6 @@
+# OwnTV OpenSubtitles proxy — Cloudflare Worker config.
+# Deploy with:  npx wrangler deploy
+# Set the secret once:  npx wrangler secret put OPENSUB_API_KEY
+name = "my-owntv-opensub"
+main = "index.js"
+compatibility_date = "2026-01-01"

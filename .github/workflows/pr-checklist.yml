@@ -1,0 +1,51 @@
+name: PR checklist
+
+# Fails the PR until the mandatory acknowledgement boxes in the PR template are ticked.
+# GitHub only enforces required checkboxes on *issue forms*, not PRs — so we enforce it here.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-acknowledgement:
+    # The pin-bump PRs the core repository opens after a publish are not contributions: they have no
+    # template, and "searched existing issues" means nothing for a one-line version bump. Exempt
+    # them. Both conditions matter — the branch name alone is trivially spoofable by anyone opening
+    # a PR, so the author must be the maintainer too. Dependabot's monthly Actions update is exempt
+    # for the same reason; its author login cannot be taken by anyone else.
+    if: "!(startsWith(github.event.pull_request.head.ref, 'bump/core-') && github.event.pull_request.user.login == 'ahXN00') && github.event.pull_request.user.login != 'dependabot[bot]'"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure required boxes are checked
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+
+            // Each required item is identified by a distinctive phrase from the PR template.
+            const required = [
+              { name: "Read the User Guide / checked Settings & functions", needle: "checked the app's **Settings**" },
+              { name: "Searched existing issues/PRs", needle: "searched existing issues/PRs" },
+            ];
+
+            // A line counts as ticked when it has "[x]" (any case) before the identifying phrase.
+            const isTicked = (needle) => {
+              const line = body.split(/\r?\n/).find(l => l.includes(needle));
+              return !!line && /\[[xX]\]/.test(line);
+            };
+
+            const missing = required.filter(r => !isTicked(r.needle)).map(r => r.name);
+
+            if (missing.length) {
+              core.setFailed(
+                "Please tick the mandatory boxes in the PR description before this can be reviewed:\n" +
+                missing.map(m => `  - [ ] ${m}`).join("\n") +
+                "\n\nEdit the PR description, tick the boxes ([x]), and this check will re-run."
+              );
+            } else {
+              core.info("All required acknowledgement boxes are ticked. ✅");
+            }

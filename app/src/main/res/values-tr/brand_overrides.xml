@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO Kullanıcısı</string>
+    <string name="content_exit_owntv">8K PRO\'den çıkılsın mı?</string>
+    <string name="content_storage_folder_fallback">İndirme klasörünüz şu anda kullanılamıyor; geri gelene kadar indirmeler 8K PRO\'nin kendi klasörüne kaydediliyor.</string>
+    <string name="content_epg_own_player">8K PRO oynatıcısı</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> hazır (sizde v<xliff:g id="current">%2$s</xliff:g> yüklü).</string>
+    <string name="recovery_title">8K PRO veritabanını açamadı</string>
+    <string name="settings_recording_timers_inexact">Bu cihaz 8K PRO’nin tam zamanlı alarm kurmasına izin vermiyor, bu yüzden bir kayıt birkaç dakika geç başlayabilir. Kayıtlar bunu telafi etmek için erken başlar.</string>
+    <string name="recording_failed_drm">Bu kanal DRM korumalı olduğundan izlenebilir ancak kaydedilemez. Bu koruma 8K PRO\'den değil, sağlayıcınızdan geliyor.</string>
+    <string name="sports_alerts_when_closed">8K PRO kapalıyken uyarılar</string>
+    <string name="sports_alerts_footnote">8K PRO kapalıyken uyarılar genellikle bir dakika içinde gelir. Telefon uzun süre ekranı kapalı ve hareketsiz kaldıysa Android bunları yaklaşık 15 dakikaya kadar geciktirebilir. Canlı skor kartı geciktirilmez.</string>
+    <string name="sports_no_playlist_body">Skorlar, puan durumları ve uyarılar onsuz da çalışır. Oynatma listesiyle 8K PRO bu maçı gösteren her kanalı bulur.</string>
+    <string name="sports_sport_buttons_description">Sporlarım: yalnızca seçtiklerin. Tüm sporlar: 8K PRO’nin bildiği her lig, yüklemesi daha uzun sürer.</string>
+    <string name="player_trailer_blocked_title">Bu fragman 8K PRO’de oynatılamıyor</string>
+    <string name="settings_proxy_description">Tüm 8K PRO trafiğini ve oynatmayı bir HTTP proxy üzerinden gönderin.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · kurulum gerekmez</string>
+    <string name="settings_metadata_clear_advanced_message">TMDB API anahtarınız ve kendi sunucu adresiniz bu cihazdan silinecek ve 8K PRO, günlük payı olan yerleşik paylaşılan hizmete geri dönecek.</string>
+    <string name="settings_metadata_fair_share">Yerleşik meta veri hizmeti 8K PRO kullanan herkes tarafından paylaşılır; bu nedenle her cihaz her gün kendi payını alır. Payınızı tüketirseniz posterler ve açıklamalar yenilenene kadar duraklar — kendi oynatma listenizdeki bilgiler normal şekilde çalışmaya devam eder. Kendi TMDB API anahtarınızı veya sunucunuzu eklemek bu sınırı kaldırır: ücretsizdir ve kişisel bir anahtarın neredeyse hiç sınırı yoktur.</string>
+    <string name="settings_ffmpeg_audio_description">Açık: ExoPlayer, cihazın kod çözücüsü olmayan sesleri de (ör. DTS, TrueHD veya MP2) çözebilir. Cihazın kendi kod çözücüleri yine önceliklidir. Kapalı: ExoPlayer yalnızca cihazın kod çözücülerini kullanır. mpv her zaman FFmpeg ile çözer. Değiştirmek 8K PRO uygulamasını yeniden başlatır.</string>
+    <string name="settings_ffmpeg_audio_restart_message">Ses kod çözücüsü 8K PRO yeniden başladıktan sonra değişir.</string>
+    <string name="settings_app_startup_description">8K PRO başlatıldığında açılacak bölüm</string>
+    <string name="settings_open_subtitles_access_priority">8K PRO’nin paylaşılan Worker’ını kullanmak için ikisini de boş bırakın. Özel bir Worker URL’si, doğrudan API anahtarına göre önceliklidir. Hesap oturumları profile özel kalır.</string>
+    <string name="settings_restore_remote_description">Aynı Wi-Fi’daki tarayıcılı herhangi bir cihazda — telefon, bilgisayar veya başka bir TV — QR kodunu tarayın (veya URL’yi açın), bu PIN’i girin, 8K PRO yedek dosyanızı seçip gönderin. Neyin geri yükleneceğini sonra burada seçersiniz.</string>
+    <string name="settings_catchup_player_internal">8K PRO oynatıcı</string>
+    <string name="settings_sources_probe_warning">Birçok sağlayıcı aynı anda kaç kanal izleyebileceğinizi hiç belirtmez; bu yüzden 8K PRO birkaç kanal açıp hangilerinin devam ettiğine bakarak bunu kendisi bulur. Şu anda oynatılan her şey duracak ve bu işlem iki dakikaya kadar sürebilir.</string>
+    <string name="settings_sources_probe_unknown">8K PRO bu sağlayıcının kaç kanala izin verdiğini belirleyemedi.</string>
+    <string name="settings_dns_toggle_description">Tüm 8K PRO alan adı sorguları özel bir DNS sunucusu üzerinden çözümlenir.</string>
+    <string name="settings_live_tune_timeout_description">Bir canlı kanal bu süre içinde görüntü vermediyse, 8K PRO tüm oynatıcılarını tek tek denerken siyah ekran bırakmak yerine denemeyi bırakır ve size söyler. “Asla” denemeyi sürdürür; sağlayıcınızın kaldırdığı bir kanalda bu bir dakikayı rahatça aşabilir. Sağlayıcınızın istediği bekleme süreleri sayılmaz.</string>
+    <string name="settings_surround_forced_description">Surround — Dolby/DTS\'yi gerçek bir 5.1/7.1 alıcıya gönderin. Ses kesilirse veya takılırsa 8K PRO yine de stereoya geri döner ve size bildirir.</string>
+    <string name="settings_language_help_translate">8K PRO\'yi kendi dilinize çevirmeye yardım edin</string>
+    <string name="settings_language_contribution_description">QR kodu okutun veya bağlantıyı açın; dilediğiniz dili seçin ve 8K PRO çevirisinin altı bileşeninin tamamına katkıda bulunun.</string>
+    <string name="settings_language_contribution_qr_description">8K PRO çeviri projesi genel bakışı için QR kodu</string>
+    <string name="settings_auto_frame_rate_warning_description">Bu cihaz Android <xliff:g id="android_version">%1$s</xliff:g> sürümüyle çalışıyor. Android 12\'den önceki sürümlerde TV, 8K PRO\'ye hangi yenileme hızlarına sorunsuz geçebileceğini bildiremez; bu yüzden hızı değiştirmek ekranın bir iki saniyeliğine kararmasına neden olabilir — bazen bir program sırasında birden fazla kez.\n\nBurada otomatik yenileme hızını kapalı bırakmanızı öneririz. TV\'niz sorunsuz geçiş yapıyorsa açıp deneyin: istediğiniz zaman geri değiştirebilirsiniz.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">Bu cihaz Android <xliff:g id="android_version">%1$s</xliff:g> sürümüyle çalışıyor. Android 12\'den önceki sürümlerde cihaz, 8K PRO\'ye hangi yenileme hızlarına sorunsuz geçebileceğini bildiremez; bu yüzden hızı değiştirmek ekranın bir iki saniyeliğine kararmasına neden olabilir — bazen bir program sırasında birden fazla kez.\n\nBurada otomatik yenileme hızını kapalı bırakmanızı öneririz. Ekranınız sorunsuz geçiş yapıyorsa açıp deneyin: istediğiniz zaman geri değiştirebilirsiniz.</string>
+    <string name="local_sync_error_unreachable">Bu cihaza ulaşılamadı. O cihazda 8K PRO → Daha fazla → Yerel eşitleme yolunu açıp Eşitleme modunu açın. Her iki cihaz da aynı Wi-Fi ağında olmalıdır.</string>
+    <string name="settings_app_icon_summary">8K PRO simgesinin ve logosunun rengi</string>
+    <string name="settings_app_icon_sheet_mobile">8K PRO’nin ana ekranınızda nasıl göründüğü. Uygulama bir kez yeniden başlar.</string>
+    <string name="app_icon_restart_title">8K PRO yeniden başlatılsın mı?</string>
+    <string name="app_icon_restart_message">Yeni bir simge ve logo seçtiniz. 8K PRO yeniden başlatıldığında geçerli olur.</string>
+    <string name="settings_help_theme">8K PRO koyu tema için tasarlandı. Sistem, varsa TV’nin kendi ayarını izler; açık tema aydınlık bir oda için uygundur.</string>
+    <string name="settings_help_fonts">8K PRO’nin her yerinde kullanılan yazı tipi ve metin boyutu. Açılır pencereler de aynı yazı tipini kullanır.</string>
+    <string name="settings_help_app_icon">TV’nizin ana ekranındaki 8K PRO simgesi. Başlatıcının değişikliği göstermesi biraz sürebilir.</string>
+    <string name="settings_help_brand_accent">Menüdeki, Hakkında bölümündeki ve kurulumdaki 8K PRO logosu oynat üçgenini vurgu renginizde gösterir. Ana ekrandaki simge kendi renklerini korur.</string>
+    <string name="settings_help_startup">8K PRO başlarken ne gösterecek: Ana sayfa, en son izlediğiniz kanal, favorileriniz veya seçtiğiniz bir kanal.</string>
+    <string name="settings_help_check_updates">GitHub’da şimdi daha yeni bir 8K PRO arar ve yüklemeyi önerir. Oynatma listeleriniz, favorileriniz ve ayarlarınız olduğu gibi kalır.</string>
+    <string name="settings_help_update_startup">8K PRO her başladığında yeni bir sürüm arar ve varsa size bildirir. Sormadan hiçbir şey yüklenmez.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">8K PRO’deki tüm menülerin ve iletilerin dili. <xliff:g id="count">%1$d</xliff:g> dil; siz seçene kadar TV’nin kendi dilini izler.</item>
+        <item quantity="other">8K PRO’deki tüm menülerin ve iletilerin dili. <xliff:g id="count">%1$d</xliff:g> dil; siz seçene kadar TV’nin kendi dilini izler.</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO televizyonun dilini kullanır (şu an <xliff:g id="language">%1$s</xliff:g>). Yalnızca 8K PRO’de kullanmak için aşağıdan bir dil seçin.</string>
+    <string name="settings_language_pick_help">Televizyonun dili ne olursa olsun 8K PRO’de <xliff:g id="language">%1$s</xliff:g> kullan.</string>
+    <string name="settings_help_bg_background">Stage, 8K PRO’nin kendi yumuşak renklerini gösterir. Resim, kendi resminizi her ekranın arkasında gösterir. Düz, koyu ve düz bir dolgudur.</string>
+    <string name="setup_disclaimer">8K PRO yalnızca bir medya oynatıcısıdır. Hiçbir kanal, oynatma listesi veya içerik içermez. Yasal olarak erişebildiğiniz kendi Xtream, M3U veya Stalker kaynaklarınızı eklemek sizin sorumluluğunuzdadır.</string>
+    <string name="setup_set_up_owntv">8K PRO\'yi kurun</string>
+    <string name="setup_sync_device_description">Diğer 8K PRO cihazınızdaki her şeyi Wi-Fi üzerinden kopyalayın</string>
+    <string name="setup_byo_source_description">8K PRO bir oynatıcıdır — kendi Xtream, M3U veya Stalker kaynağınızı ekleyin.</string>
+    <string name="companion_pin_page_title">8K PRO — PIN Girin</string>
+    <string name="companion_add_page_title">8K PRO — Kaynak ekle</string>
+    <string name="companion_saved_page_title">8K PRO — Gönderildi</string>
+    <string name="companion_backup_page_title">8K PRO — Yedeklemeyi geri yükle</string>
+    <string name="companion_backup_description">Bir 8K PRO yedekleme dosyası (.own veya eski bir .json dosyası) seçip Gönder düğmesine basın. Dosya TV\'ye aktarılır — uzaktan kumandayı alın ve orada nelerin geri yükleneceğini seçin.</string>
+    <string name="companion_image_page_title">8K PRO — Arka plan görseli</string>
+    <string name="companion_download_page_title">8K PRO — Yedeklemeyi indir</string>
+    <string name="companion_download_description">TV\'niz bir 8K PRO yedekleme dosyası hazırladı. Bu cihaza (owntv-backup.own) kaydetmek için düğmeye dokunun. Dosyayı güvenli bir yerde saklayın — daha sonra bu dosyadan geri yükleme yapabilirsiniz.</string>
+    <string name="local_sync_browser_title">8K PRO yerel eşitleme</string>
+    <string name="local_sync_browser_body">Bu adres, diğer cihazınızdaki 8K PRO uygulaması içindir. Orada Yerel eşitlemeyi açın ve listeden bu cihazı seçin.</string>
+    <string name="setup_welcome_title">8K PRO’ye hoş geldiniz</string>
+    <string name="setup_line_app_icon">8K PRO’nin TV’nin ana ekranında nasıl göründüğü</string>
+    <string name="setup_line_app_icon_mobile">8K PRO’nin ana ekranınızda nasıl göründüğü</string>
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO-felhasználó</string>
+    <string name="content_exit_owntv">Kilépsz az 8K PRO-ből?</string>
+    <string name="content_storage_folder_fallback">A letöltési mappa most nem érhető el, ezért a letöltések az 8K PRO saját mappájába kerülnek, amíg vissza nem tér.</string>
+    <string name="content_epg_own_player">8K PRO-lejátszó</string>
+    <string name="update_ready">Az 8K PRO v<xliff:g id="available">%1$s</xliff:g> készen áll (jelenleg a v<xliff:g id="current">%2$s</xliff:g> fut).</string>
+    <string name="recovery_title">Az 8K PRO nem tudta megnyitni az adatbázisát</string>
+    <string name="settings_recording_timers_inexact">Ez az eszköz nem engedi az 8K PRO-nek a pontos ébresztők beállítását, ezért egy felvétel néhány perccel később indulhat. A felvételek emiatt korábban kezdődnek.</string>
+    <string name="recording_failed_drm">Ez a csatorna DRM-védett, ezért megnézhető, de nem rögzíthető. A védelmet a szolgáltatója alkalmazza, nem az 8K PRO.</string>
+    <string name="sports_alerts_when_closed">Értesítések bezárt 8K PRO mellett</string>
+    <string name="sports_alerts_footnote">Bezárt 8K PRO mellett az értesítések általában egy percen belül megérkeznek. Ha a telefon sokáig mozdulatlanul, kikapcsolt képernyővel fekszik, az Android akár kb. 15 percig is visszatarthatja őket. Az élő eredménykártyát nem tartja vissza.</string>
+    <string name="sports_no_playlist_body">Az eredmények, tabellák és értesítések enélkül is működnek. Lejátszási listával az 8K PRO minden csatornát megtalál, amely ezt a meccset adja.</string>
+    <string name="sports_sport_buttons_description">Saját sportágaim: csak amit kiválasztottál. Minden sportág: minden bajnokság, amit az 8K PRO ismer – ez lassabban töltődik be.</string>
+    <string name="player_trailer_blocked_title">Ez az előzetes nem játszható le az 8K PRO-ben</string>
+    <string name="settings_proxy_description">Az 8K PRO teljes forgalmát és lejátszását HTTP-proxyn keresztül küldi.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · nincs teendő</string>
+    <string name="settings_open_subtitles_access_priority">Hagyd mindkettőt üresen az 8K PRO közös Workeréhez. Az egyéni Worker URL elsőbbséget élvez a közvetlen API-kulccsal szemben. A fiókmenetek profilonként külön maradnak.</string>
+    <string name="settings_metadata_clear_advanced_message">A TMDB API-kulcsod és a saját üzemeltetésű kiszolgálód címe törlődik erről az eszközről, és az 8K PRO visszatér a beépített közös szolgáltatáshoz és annak napi keretéhez.</string>
+    <string name="settings_metadata_fair_share">A beépített szolgáltatáson mindenki osztozik, aki 8K PRO-t használ. Ha bármelyik perces, órás vagy napi keret elfogy, a TMDB-részletek szünetelnek, amíg az adott időszak vissza nem áll; a lejátszási lista adatai továbbra is működnek. A saját kulcsod vagy Workered megszünteti ezt a korlátot.</string>
+    <string name="settings_auto_frame_rate_warning_description">Ezen az eszközön Android <xliff:g id="android_version">%1$s</xliff:g> fut. Android 12 alatt a TV nem tudja megmondani az 8K PRO-nek, mely frissítési frekvenciákra tud zökkenőmentesen váltani, ezért a frekvenciaváltás egy-két másodpercre elsötétítheti a képet — néha egy műsor alatt többször is.\n\nAzt javasoljuk, hagyd itt kikapcsolva az automatikus képkockasebességet. Ha a TV-d tisztán vált, kapcsold be, és próbáld ki: bármikor visszaállíthatod.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">Ezen az eszközön Android <xliff:g id="android_version">%1$s</xliff:g> fut. Android 12 alatt az eszköz nem tudja megmondani az 8K PRO-nek, mely frissítési frekvenciákra tud zökkenőmentesen váltani, ezért a frekvenciaváltás egy-két másodpercre elsötétítheti a képet — néha egy műsor alatt többször is.\n\nAzt javasoljuk, hagyd itt kikapcsolva az automatikus képkockasebességet. Ha a kijelződ tisztán vált, kapcsold be, és próbáld ki: bármikor visszaállíthatod.</string>
+    <string name="settings_ffmpeg_audio_description">Be: az ExoPlayer olyan hangot is dekódolhat, amelyhez az eszköznek nincs dekódere, például DTS, TrueHD vagy MP2. Az eszköz saját dekóderei továbbra is elsőbbséget élveznek. Ki: az ExoPlayer csak az eszköz dekódereit használja. Az mpv mindig FFmpeggel dekódol. A módosítás újraindítja az 8K PRO-t.</string>
+    <string name="settings_ffmpeg_audio_restart_message">A hangdekóder az 8K PRO újraindítása után vált.</string>
+    <string name="settings_app_startup_description">Mit nyit meg az 8K PRO induláskor</string>
+    <string name="settings_restore_remote_description">Bármelyik böngészős eszközön ugyanazon a Wi-Fin – telefonon, számítógépen vagy egy másik tévén – olvasd be a QR-kódot (vagy nyisd meg az URL-t), add meg ezt a PIN-t, válaszd ki az 8K PRO mentésfájlodat, és küldd el. Azt, hogy mit állíts vissza, itt választod ki.</string>
+    <string name="settings_catchup_player_internal">8K PRO lejátszó</string>
+    <string name="settings_sources_probe_warning">Sok szolgáltató soha nem árulja el, hány csatornát nézhet egyszerre, ezért az 8K PRO úgy deríti ki, hogy megnyit néhányat, és megnézi, melyik marad életben. Minden, ami most szól, le fog állni, és ez akár két percig is eltarthat.</string>
+    <string name="settings_sources_probe_unknown">Az 8K PRO nem tudta megállapítani, hány csatornát enged ez a szolgáltató.</string>
+    <string name="settings_dns_toggle_description">Az 8K PRO összes domainfeloldása egyéni DNS-kiszolgálón keresztül történjen.</string>
+    <string name="settings_live_tune_timeout_description">Ha egy élő csatorna eddig sem mutatott képet, az 8K PRO abbahagyja a próbálkozást és szól, ahelyett hogy fekete képernyőt hagyna, miközben végigmegy az összes lejátszóján. A Soha tovább próbálkozik, ami jóval egy percnél is tovább tarthat egy olyan csatornánál, amit a szolgáltatód eltávolított. A szolgáltatód által kért várakozások nem számítanak bele.</string>
+    <string name="settings_surround_forced_description">Térhangzás — Dolby/DTS küldése valódi 5.1/7.1 erősítőnek. Ha elnémul vagy akadozik, az 8K PRO akkor is sztereóra vált, és szól róla.</string>
+    <string name="settings_language_help_translate">Segíts lefordítani az 8K PRO-t a nyelvedre</string>
+    <string name="settings_language_contribution_description">Olvasd be a QR-kódot vagy nyisd meg a hivatkozást, hogy bármelyik elérhető nyelvet válaszd, és mind a hat 8K PRO-fordítási komponenshez hozzájárulj.</string>
+    <string name="settings_language_contribution_qr_description">QR-kód az 8K PRO-fordítási projekt áttekintéséhez</string>
+    <string name="local_sync_error_unreachable">Ez az eszköz nem érhető el. Nyissa meg rajta az 8K PRO → Továbbiak → Helyi szinkronizálás menüpontot, és kapcsolja be a Szinkronizálási módot. Mindkét eszköznek ugyanazon a Wi-Fi-n kell lennie.</string>
+    <string name="settings_app_icon_summary">Az 8K PRO ikonjának és logójának színe</string>
+    <string name="settings_app_icon_sheet_mobile">Így jelenik meg az 8K PRO a kezdőképernyődön. Az alkalmazás egyszer újraindul.</string>
+    <string name="app_icon_restart_title">Újraindítja az 8K PRO-t?</string>
+    <string name="app_icon_restart_message">Új ikont és logót választott. Az 8K PRO újraindítása után lépnek életbe.</string>
+    <string name="settings_help_theme">Az 8K PRO sötét témára készült. A Rendszer a tévé saját beállítását követi, ha van ilyen; a Világos világos szobába való.</string>
+    <string name="settings_help_fonts">Az 8K PRO-ben mindenhol használt betűtípus és a szöveg mérete. Az ablakok is ugyanezt a betűtípust használják.</string>
+    <string name="settings_help_app_icon">Az 8K PRO ikonja a tévé kezdőképernyőjén. Az indítónak eltarthat egy pillanatig, mire megjeleníti a változást.</string>
+    <string name="settings_help_brand_accent">Az 8K PRO logó a menüben, a Névjegyben és a beállításban a kiemelőszínedben mutatja a lejátszás-háromszöget. A kezdőképernyő ikonja megtartja a saját színeit.</string>
+    <string name="settings_help_startup">Amit az 8K PRO induláskor mutat: a kezdőlap, a legutóbb nézett csatorna, a kedvencek vagy egy választott csatorna.</string>
+    <string name="settings_help_check_updates">Most megkeresi a GitHubon az 8K PRO újabb verzióját, és felajánlja a telepítését. A lejátszási listák, kedvencek és beállítások változatlanok maradnak.</string>
+    <string name="settings_help_update_startup">Az 8K PRO minden indításakor új verziót keres, és szól, ha van. Kérdezés nélkül semmi sem települ.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">Az 8K PRO összes menüjének és üzenetének nyelve. <xliff:g id="count">%1$d</xliff:g> nyelv; amíg nem választ, a tévé saját nyelvét követi.</item>
+        <item quantity="other">Az 8K PRO összes menüjének és üzenetének nyelve. <xliff:g id="count">%1$d</xliff:g> nyelv; amíg nem választ, a tévé saját nyelvét követi.</item>
+    </plurals>
+    <string name="settings_language_system_help">Az 8K PRO a tévé nyelvét használja (most: <xliff:g id="language">%1$s</xliff:g>). Válassz lent egy nyelvet, ha csak az 8K PRO-ben szeretnéd használni.</string>
+    <string name="settings_language_pick_help"><xliff:g id="language">%1$s</xliff:g> használata az 8K PRO-ben, a tévé nyelvétől függetlenül.</string>
+    <string name="settings_help_bg_background">A Stage az 8K PRO saját lágy színeit mutatja. A Kép a saját képedet mutatja minden képernyő mögött. Az Egyszerű sima sötét kitöltés.</string>
+    <string name="setup_disclaimer">Az 8K PRO kizárólag médialejátszó. Nem tartalmaz csatornákat, lejátszási listákat vagy tartalmat. A saját, legálisan elérhető Xtream-, M3U- vagy Stalker-forrásaid hozzáadása a te felelősséged.</string>
+    <string name="setup_set_up_owntv">Az 8K PRO beállítása</string>
+    <string name="setup_sync_device_description">Másolj át mindent a másik 8K PRO-eszközödről Wi-Fin keresztül</string>
+    <string name="setup_byo_source_description">Az 8K PRO egy lejátszó — hozd a saját Xtream-, M3U- vagy Stalker-forrásodat.</string>
+    <string name="companion_pin_page_title">8K PRO — PIN-kód megadása</string>
+    <string name="companion_add_page_title">8K PRO — Forrás hozzáadása</string>
+    <string name="companion_saved_page_title">8K PRO — Elküldve</string>
+    <string name="companion_backup_page_title">8K PRO — Mentés visszaállítása</string>
+    <string name="companion_backup_description">Válassz egy 8K PRO-mentésfájlt (.own, vagy egy régebbi .json fájlt), és nyomd meg a Küldés gombot. Átkerül a TV-re — vedd kézbe a távirányítót, és ott válaszd ki, mit állítson vissza.</string>
+    <string name="companion_image_page_title">8K PRO — Háttérkép</string>
+    <string name="companion_download_page_title">8K PRO — Mentés letöltése</string>
+    <string name="companion_download_description">A TV-d elkészített egy 8K PRO-mentésfájlt. Koppints a gombra, hogy elmentsd erre az eszközre (owntv-backup.own). Tartsd biztonságos helyen — később visszaállíthatod belőle az adataidat.</string>
+    <string name="local_sync_browser_title">8K PRO helyi szinkronizálás</string>
+    <string name="local_sync_browser_body">Ez a cím a másik eszközén futó 8K PRO alkalmazásnak szól. Nyissa meg ott a Helyi szinkronizálást, és válassza ki ezt az eszközt a listából.</string>
+    <string name="setup_welcome_title">Üdvözöl az 8K PRO</string>
+    <string name="setup_line_app_icon">Így jelenik meg az 8K PRO a tévé kezdőképernyőjén</string>
+    <string name="setup_line_app_icon_mobile">Így jelenik meg az 8K PRO a kezdőképernyődön</string>
+</resources>

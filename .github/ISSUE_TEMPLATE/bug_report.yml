@@ -1,0 +1,83 @@
+name: Bug report
+description: Something not working in OwnTV (playback, EPG, import, UI…)
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve OwnTV! The more detail you give, the faster it gets fixed.
+
+  - type: checkboxes
+    id: mandatory_checks
+    attributes:
+      label: Before you open this (required)
+      description: >
+        Most reports are already answered in the app or the User Guide. Please genuinely check
+        these — issues opened without them are usually closed. The last three boxes are mandatory.
+      options:
+        - label: >
+            I read the **[User Guide](https://github.com/ahXN00/OwnTV/blob/main/extras/USER_GUIDE.md)**
+            and checked the relevant **Settings** and **in-app functions** for this (e.g. the
+            top-bar playlist switcher, per-playlist Default, HDR, Surround, Catch-up time, Player).
+          required: true
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: I'm on the latest version (More → About) and tried re-syncing the playlist (and EPG, for guide issues).
+          required: true
+
+  - type: textarea
+    id: what_happens
+    attributes:
+      label: What happens
+      description: Describe the problem. What did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: onscreen_error
+    attributes:
+      label: The on-screen error ⚠️ important
+      description: >
+        When playback fails, OwnTV shows a friendly message AND a small "err: ..." line at the bottom of
+        the player. Copy that EXACT "err: ..." text here (or photograph it).
+      placeholder: "err: "
+      render: text
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: Your setup
+      value: |
+        - **Device & model:**
+        - **Fire OS / Android version:**
+        - **OwnTV version:**
+        - **Playlist type:** Xtream / M3U URL / local M3U file
+        - **Content type:** Live TV / Movie / Series / Catch-up / EPG
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot / photo
+      description: A screenshot, or a phone photo of the TV screen, helps a lot — especially the error screen.
+
+  - type: textarea
+    id: logcat
+    attributes:
+      label: Logcat (optional, but the most useful thing you can attach)
+      description: >
+        If you can, capture a logcat and attach it. Ask in the issue if you need the adb command.
+        ⚠️ Please remove your username/password from the log if they appear in any URL.

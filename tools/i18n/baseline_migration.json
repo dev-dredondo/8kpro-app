@@ -1,0 +1,5 @@
+{
+  "fromScannerVersion": 5,
+  "toScannerVersion": 6,
+  "reason": "Scanner v6 removes semantic SQL/JSON/call inference. Every Kotlin literal is now classified explicitly as either shrinking translation debt or reviewed technical policy in safe_literals.txt."
+}

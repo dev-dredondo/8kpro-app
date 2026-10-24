@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO ഉപയോക്താവ്</string>
+    <string name="content_exit_owntv">8K PRO-യിൽ നിന്ന് പുറത്തുകടക്കണോ?</string>
+    <string name="content_storage_folder_fallback">നിങ്ങളുടെ ഡൗൺലോഡ് ഫോൾഡർ ഇപ്പോൾ ലഭ്യമല്ല, അതിനാൽ അത് തിരികെ വരുന്നതുവരെ ഡൗൺലോഡുകൾ 8K PRO-യുടെ സ്വന്തം ഫോൾഡറിൽ സംരക്ഷിക്കുന്നു.</string>
+    <string name="content_epg_own_player">8K PRO പ്ലെയർ</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> തയ്യാറാണ് (നിങ്ങളുടെ പക്കലുള്ളത് v<xliff:g id="current">%2$s</xliff:g> ആണ്).</string>
+    <string name="recovery_title">8K PRO-യ്ക്ക് അതിന്റെ ഡാറ്റാബേസ് തുറക്കാനായില്ല</string>
+    <string name="settings_recording_timers_inexact">ഈ ഉപകരണം 8K PRO-യെ കൃത്യമായ അലാറം സജ്ജമാക്കാൻ അനുവദിക്കുന്നില്ല, അതിനാൽ റെക്കോർഡിംഗ് കുറച്ച് മിനിറ്റ് വൈകി തുടങ്ങാം. അത് നികത്താൻ റെക്കോർഡിംഗ് നേരത്തെ ആരംഭിക്കുന്നു.</string>
+    <string name="recording_failed_drm">ഈ ചാനൽ DRM പരിരക്ഷിതമാണ്, അതിനാൽ കാണാൻ കഴിയും പക്ഷേ റെക്കോർഡ് ചെയ്യാൻ കഴിയില്ല. ഈ പരിരക്ഷ നൽകുന്നത് നിങ്ങളുടെ സേവനദാതാവാണ്, 8K PRO അല്ല.</string>
+    <string name="sports_alerts_when_closed">8K PRO അടച്ചിരിക്കുമ്പോൾ അലേർട്ടുകൾ</string>
+    <string name="sports_alerts_footnote">8K PRO അടച്ചിരിക്കുമ്പോൾ അലേർട്ടുകൾ സാധാരണയായി ഒരു മിനിറ്റിനുള്ളിൽ എത്തും. ഫോൺ സ്ക്രീൻ ഓഫാക്കി ദീർഘനേരം അനങ്ങാതെ കിടന്നാൽ, Android അവ ഏകദേശം 15 മിനിറ്റ് വരെ വൈകിപ്പിച്ചേക്കാം. തത്സമയ സ്കോർ കാർഡ് വൈകില്ല.</string>
+    <string name="sports_no_playlist_body">സ്കോറുകൾ, പട്ടികകൾ, അലേർട്ടുകൾ എന്നിവ ഇതില്ലാതെയും പ്രവർത്തിക്കും. ഒരു പ്ലേലിസ്റ്റ് ഉണ്ടെങ്കിൽ, ഈ മത്സരം കാണിക്കുന്ന എല്ലാ ചാനലുകളും 8K PRO കണ്ടെത്തും.</string>
+    <string name="sports_sport_buttons_description">എന്റെ കായിക ഇനങ്ങൾ: നിങ്ങൾ തിരഞ്ഞെടുത്തവ മാത്രം. എല്ലാ കായിക ഇനങ്ങളും: 8K PRO-ക്ക് അറിയാവുന്ന എല്ലാ ലീഗുകളും, ലോഡ് ചെയ്യാൻ കൂടുതൽ സമയമെടുക്കും.</string>
+    <string name="player_trailer_blocked_title">ഈ ട്രെയിലർ 8K PRO-യിൽ പ്ലേ ചെയ്യാനാകില്ല</string>
+    <string name="settings_proxy_description">8K PRO-യുടെ എല്ലാ ട്രാഫിക്കും പ്ലേബാക്കും ഒരു HTTP പ്രോക്സിയിലൂടെ അയയ്ക്കുക.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · സജ്ജീകരണം വേണ്ട</string>
+    <string name="settings_metadata_clear_advanced_message">നിങ്ങളുടെ TMDB API കീയും സെർവർ വിലാസവും ഈ ഉപകരണത്തിൽ നിന്ന് ഇല്ലാതാക്കും, കൂടാതെ 8K PRO ദൈനംദിന വിഹിതമുള്ള അന്തർനിർമ്മിത പങ്കിട്ട സേവനത്തിലേക്ക് മടങ്ങും.</string>
+    <string name="settings_metadata_fair_share">അന്തർനിർമ്മിത മെറ്റാഡാറ്റ സേവനം 8K PRO ഉപയോഗിക്കുന്ന എല്ലാവരും പങ്കിടുന്നു, അതിനാൽ ഓരോ ഉപകരണത്തിനും ഓരോ ദിവസവും സ്വന്തം വിഹിതം ലഭിക്കും. വിഹിതം തീർന്നാൽ പോസ്റ്ററുകളും വിവരണങ്ങളും അത് വീണ്ടും നിറയുന്നതുവരെ താൽക്കാലികമായി നിർത്തും — നിങ്ങളുടെ പ്ലേലിസ്റ്റിലെ വിവരങ്ങൾ പതിവുപോലെ പ്രവർത്തിക്കും. സ്വന്തം TMDB API കീയോ സെർവറോ ചേർത്താൽ ഈ പരിധി ഇല്ലാതാകും: അത് സൗജന്യമാണ്, വ്യക്തിഗത കീയ്ക്ക് പ്രായോഗികമായി പരിധിയില്ല.</string>
+    <string name="settings_ffmpeg_audio_description">ഓൺ: ഉപകരണത്തിൽ ഡീകോഡർ ഇല്ലാത്ത ശബ്ദവും (ഉദാ. DTS, TrueHD, MP2) ExoPlayer-ന് ഡീകോഡ് ചെയ്യാം. ഉപകരണത്തിന്റെ സ്വന്തം ഡീകോഡറുകൾക്കാണ് ഇപ്പോഴും മുൻഗണന. ഓഫ്: ExoPlayer ഉപകരണത്തിന്റെ ഡീകോഡറുകൾ മാത്രം ഉപയോഗിക്കുന്നു. mpv എപ്പോഴും FFmpeg ഉപയോഗിച്ച് ഡീകോഡ് ചെയ്യുന്നു. ഇത് മാറ്റിയാൽ 8K PRO റീസ്റ്റാർട്ട് ചെയ്യും.</string>
+    <string name="settings_ffmpeg_audio_restart_message">8K PRO റീസ്റ്റാർട്ട് ചെയ്ത ശേഷം ഓഡിയോ ഡീകോഡർ മാറും.</string>
+    <string name="settings_app_startup_description">8K PRO ആരംഭിക്കുമ്പോൾ തുറക്കേണ്ടത്</string>
+    <string name="settings_open_subtitles_access_priority">8K PRO-യുടെ പങ്കിട്ട Worker ഉപയോഗിക്കാൻ രണ്ടും ശൂന്യമായി വിടുക. കസ്റ്റം Worker URL-ന് നേരിട്ടുള്ള API കീയേക്കാൾ മുൻഗണനയുണ്ട്. അക്കൗണ്ട് സെഷനുകൾ പ്രൊഫൈൽ പ്രത്യേകമായി തുടരും.</string>
+    <string name="settings_restore_remote_description">അതേ വൈ-ഫൈയിൽ ബ്രൗസറുള്ള ഏത് ഉപകരണത്തിലും — ഫോൺ, കമ്പ്യൂട്ടർ അല്ലെങ്കിൽ മറ്റൊരു ടിവി — QR സ്കാൻ ചെയ്യുക (അല്ലെങ്കിൽ URL തുറക്കുക), ഈ PIN നൽകി, നിങ്ങളുടെ 8K PRO ബാക്കപ്പ് ഫയൽ തിരഞ്ഞെടുത്ത് അയയ്ക്കുക. എന്ത് പുനഃസ്ഥാപിക്കണമെന്ന് പിന്നീട് ഇവിടെ തിരഞ്ഞെടുക്കാം.</string>
+    <string name="settings_catchup_player_internal">8K PRO പ്ലെയർ</string>
+    <string name="settings_sources_probe_warning">ഒരേസമയം എത്ര ചാനലുകൾ കാണാമെന്ന് പല ദാതാക്കളും ഒരിക്കലും പറയാറില്ല. അതിനാൽ കുറച്ച് ചാനലുകൾ തുറന്ന് ഏതൊക്കെ തുടരുന്നു എന്ന് നോക്കിയാണ് 8K PRO ഇത് കണ്ടെത്തുന്നത്. ഇപ്പോൾ പ്ലേ ചെയ്യുന്നതെല്ലാം നിലയ്ക്കും, ഇതിന് രണ്ട് മിനിറ്റ് വരെ എടുത്തേക്കാം.</string>
+    <string name="settings_sources_probe_unknown">ഈ ദാതാവ് എത്ര ചാനലുകൾ അനുവദിക്കുന്നു എന്ന് 8K PRO-യ്ക്ക് കണ്ടെത്താനായില്ല.</string>
+    <string name="settings_dns_toggle_description">എല്ലാ 8K PRO ഡൊമെയ്ൻ ലുക്കപ്പുകളും ഒരു ഇഷ്ടാനുസൃത DNS സെർവർ വഴി പരിഹരിക്കുക.</string>
+    <string name="settings_live_tune_timeout_description">ഈ സമയത്തിനുള്ളിൽ ഒരു ലൈവ് ചാനലിൽ ചിത്രം വന്നില്ലെങ്കിൽ, തന്റെ എല്ലാ പ്ലേയറുകളും ഓരോന്നായി പരീക്ഷിച്ച് കറുത്ത സ്ക്രീൻ കാണിച്ചുനിൽക്കുന്നതിനു പകരം 8K PRO ശ്രമം നിർത്തി നിങ്ങളോട് പറയും. “ഒരിക്കലും വേണ്ട” എന്നത് ശ്രമം തുടരും; നിങ്ങളുടെ ദാതാവ് നീക്കം ചെയ്ത ചാനലിൽ അതിന് ഒരു മിനിറ്റിലേറെ എടുക്കാം. ദാതാവ് തന്നെ ആവശ്യപ്പെടുന്ന കാത്തിരിപ്പ് ഇതിൽ കണക്കാക്കില്ല.</string>
+    <string name="settings_surround_forced_description">സറൗണ്ട് — ഡോൾബി/DTS ഒരു യഥാർത്ഥ 5.1/7.1 റിസീവറിലേക്ക് അയയ്ക്കുക. അത് നിശ്ശബ്ദമാകുകയോ സ്റ്റട്ടർ ചെയ്യുകയോ ചെയ്താൽ, 8K PRO ഇപ്പോഴും സ്റ്റീരിയോയിലേക്ക് മടങ്ങുകയും നിങ്ങളെ അറിയിക്കുകയും ചെയ്യും.</string>
+    <string name="settings_language_help_translate">8K PRO നിങ്ങളുടെ ഭാഷയിലേക്ക് വിവർത്തനം ചെയ്യാൻ സഹായിക്കുക</string>
+    <string name="settings_language_contribution_description">QR കോഡ് സ്കാൻ ചെയ്യുക അല്ലെങ്കിൽ ലിങ്ക് തുറന്ന് ലഭ്യമായ ഏത് ഭാഷയും തിരഞ്ഞെടുത്ത് 8K PRO-യുടെ ആറ് വിവർത്തന ഘടകങ്ങളിലും സംഭാവന നൽകുക.</string>
+    <string name="settings_language_contribution_qr_description">8K PRO വിവർത്തന പ്രോജക്റ്റ് അവലോകനത്തിനുള്ള QR കോഡ്</string>
+    <string name="settings_auto_frame_rate_warning_description">ഈ ഉപകരണം Android <xliff:g id="android_version">%1$s</xliff:g> ആണ് പ്രവർത്തിപ്പിക്കുന്നത്. Android 12-ന് താഴെ, ഏത് റിഫ്രഷ് റേറ്റുകളിലേക്ക് സുഗമമായി മാറാനാകുമെന്ന് ടിവിക്ക് 8K PRO-യോട് പറയാൻ കഴിയില്ല. അതിനാൽ ഫ്രെയിം റേറ്റ് മാറ്റുമ്പോൾ സ്ക്രീൻ ഒരു സെക്കൻഡോ രണ്ടോ ഇരുണ്ടുപോയേക്കാം — ചിലപ്പോൾ ഒരു പ്രോഗ്രാമിനിടെ ഒന്നിലധികം തവണ.\n\nഓട്ടോ ഫ്രെയിം റേറ്റ് ഇവിടെ ഓഫ് ആക്കി വയ്ക്കാൻ ഞങ്ങൾ ശുപാർശ ചെയ്യുന്നു. നിങ്ങളുടെ ടിവി വൃത്തിയായി മാറുന്നുണ്ടെങ്കിൽ, അത് ഓൺ ചെയ്ത് നോക്കൂ: എപ്പോൾ വേണമെങ്കിലും നിങ്ങൾക്ക് തിരികെ മാറ്റാം.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">ഈ ഉപകരണം Android <xliff:g id="android_version">%1$s</xliff:g> ആണ് പ്രവർത്തിപ്പിക്കുന്നത്. Android 12-ന് താഴെ, ഏത് റിഫ്രഷ് റേറ്റുകളിലേക്ക് സുഗമമായി മാറാനാകുമെന്ന് ഉപകരണത്തിന് 8K PRO-യോട് പറയാൻ കഴിയില്ല. അതിനാൽ ഫ്രെയിം റേറ്റ് മാറ്റുമ്പോൾ സ്ക്രീൻ ഒരു സെക്കൻഡോ രണ്ടോ ഇരുണ്ടുപോയേക്കാം — ചിലപ്പോൾ ഒരു പ്രോഗ്രാമിനിടെ ഒന്നിലധികം തവണ.\n\nഓട്ടോ ഫ്രെയിം റേറ്റ് ഇവിടെ ഓഫ് ആക്കി വയ്ക്കാൻ ഞങ്ങൾ ശുപാർശ ചെയ്യുന്നു. നിങ്ങളുടെ സ്ക്രീൻ വൃത്തിയായി മാറുന്നുണ്ടെങ്കിൽ, അത് ഓൺ ചെയ്ത് നോക്കൂ: എപ്പോൾ വേണമെങ്കിലും നിങ്ങൾക്ക് തിരികെ മാറ്റാം.</string>
+    <string name="local_sync_error_unreachable">ഈ ഉപകരണത്തിലേക്ക് എത്താനായില്ല. അതിൽ 8K PRO → കൂടുതൽ → ലോക്കൽ സമന്വയം തുറന്ന് സമന്വയ മോഡ് ഓണാക്കുക. രണ്ട് ഉപകരണങ്ങളും ഒരേ വൈ-ഫൈയിൽ ആയിരിക്കണം.</string>
+    <string name="settings_app_icon_summary">8K PRO ഐക്കണിന്റെയും ലോഗോയുടെയും നിറം</string>
+    <string name="settings_app_icon_sheet_mobile">നിങ്ങളുടെ ഹോം സ്ക്രീനിൽ 8K PRO എങ്ങനെ കാണപ്പെടുന്നു. ആപ്പ് ഒരിക്കൽ റീസ്റ്റാർട്ട് ചെയ്യും.</string>
+    <string name="app_icon_restart_title">8K PRO റീസ്റ്റാർട്ട് ചെയ്യണോ?</string>
+    <string name="app_icon_restart_message">നിങ്ങൾ പുതിയ ഐക്കണും ലോഗോയും തിരഞ്ഞെടുത്തു. 8K PRO റീസ്റ്റാർട്ട് ചെയ്ത ശേഷം ഇവ പ്രാബല്യത്തിൽ വരും.</string>
+    <string name="settings_help_theme">8K PRO ഡാർക്കിനായി രൂപകൽപ്പന ചെയ്തതാണ്. സിസ്റ്റം ടിവിയുടെ സ്വന്തം ക്രമീകരണം ഉണ്ടെങ്കിൽ പിന്തുടരും; ലൈറ്റ് വെളിച്ചമുള്ള മുറിക്ക് യോജിക്കും.</string>
+    <string name="settings_help_fonts">8K PRO-യിൽ മുഴുവൻ ഉപയോഗിക്കുന്ന ഫോണ്ടും എഴുത്തിന്റെ വലുപ്പവും. പോപ്പപ്പുകളും ഇതേ ഫോണ്ട് ഉപയോഗിക്കും.</string>
+    <string name="settings_help_app_icon">ടിവിയുടെ ഹോം സ്ക്രീനിലെ 8K PRO ഐക്കൺ. മാറ്റം കാണിക്കാൻ ലോഞ്ചറിന് അൽപസമയം എടുത്തേക്കാം.</string>
+    <string name="settings_help_brand_accent">മെനു, About, സജ്ജീകരണം എന്നിവിടങ്ങളിലെ 8K PRO ലോഗോ പ്ലേ ത്രികോണം നിങ്ങളുടെ ആക്സന്റ് നിറത്തിൽ കാണിക്കും. ഹോം സ്ക്രീനിലെ ഐക്കൺ സ്വന്തം നിറങ്ങൾ നിലനിർത്തും.</string>
+    <string name="settings_help_startup">8K PRO തുടങ്ങുമ്പോൾ എന്ത് കാണിക്കണം: ഹോം, അവസാനം കണ്ട ചാനൽ, നിങ്ങളുടെ പ്രിയപ്പെട്ടവ, അല്ലെങ്കിൽ നിങ്ങൾ തിരഞ്ഞെടുക്കുന്ന ചാനൽ.</string>
+    <string name="settings_help_check_updates">ഇപ്പോൾ തന്നെ GitHub-ൽ പുതിയ 8K PRO തിരഞ്ഞ് ഇൻസ്റ്റാൾ ചെയ്യാൻ നിർദ്ദേശിക്കും. നിങ്ങളുടെ പ്ലേലിസ്റ്റുകളും പ്രിയപ്പെട്ടവയും ക്രമീകരണങ്ങളും അതേപടി തുടരും.</string>
+    <string name="settings_help_update_startup">8K PRO തുടങ്ങുമ്പോഴെല്ലാം പുതിയ പതിപ്പ് തിരഞ്ഞ്, ഉണ്ടെങ്കിൽ അറിയിക്കും. ചോദിക്കാതെ ഒന്നും ഇൻസ്റ്റാൾ ചെയ്യില്ല.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">8K PRO-യിലെ എല്ലാ മെനുകളുടെയും സന്ദേശങ്ങളുടെയും ഭാഷ. <xliff:g id="count">%1$d</xliff:g> ഭാഷകൾ; നിങ്ങൾ ഒന്ന് തിരഞ്ഞെടുക്കും വരെ ടിവിയുടെ സ്വന്തം ഭാഷ പിന്തുടരും.</item>
+        <item quantity="other">8K PRO-യിലെ എല്ലാ മെനുകളുടെയും സന്ദേശങ്ങളുടെയും ഭാഷ. <xliff:g id="count">%1$d</xliff:g> ഭാഷകൾ; നിങ്ങൾ ഒന്ന് തിരഞ്ഞെടുക്കും വരെ ടിവിയുടെ സ്വന്തം ഭാഷ പിന്തുടരും.</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO ടിവിയുടെ ഭാഷ പിന്തുടരുന്നു (ഇപ്പോൾ <xliff:g id="language">%1$s</xliff:g>). 8K PRO-യിൽ മാത്രം ഉപയോഗിക്കാൻ താഴെ ഒരു ഭാഷ തിരഞ്ഞെടുക്കുക.</string>
+    <string name="settings_language_pick_help">ടിവിയുടെ ഭാഷ എന്തായാലും 8K PRO-യിൽ <xliff:g id="language">%1$s</xliff:g> ഉപയോഗിക്കുക.</string>
+    <string name="settings_help_bg_background">Stage 8K PRO-യുടെ സ്വന്തം മൃദുവായ നിറങ്ങൾ കാണിക്കുന്നു. ചിത്രം ഓരോ സ്ക്രീനിനും പിന്നിൽ നിങ്ങളുടെ ചിത്രം കാണിക്കുന്നു. സാധാരണം ഒരു പരന്ന ഇരുണ്ട നിറമാണ്.</string>
+    <string name="setup_disclaimer">8K PRO ഒരു മീഡിയ പ്ലെയർ മാത്രമാണ്. ഇതിൽ ചാനലുകളോ പ്ലേലിസ്റ്റുകളോ ഉള്ളടക്കമോ ഉൾപ്പെടുന്നില്ല. നിങ്ങൾക്ക് നിയമപരമായി ആക്‌സസ് ചെയ്യാനാകുന്ന സ്വന്തം Xtream, M3U, അല്ലെങ്കിൽ Stalker ഉറവിടങ്ങൾ ചേർക്കേണ്ട ഉത്തരവാദിത്തം നിങ്ങൾക്കാണ്.</string>
+    <string name="setup_set_up_owntv">8K PRO സജ്ജമാക്കുക</string>
+    <string name="setup_sync_device_description">വൈ-ഫൈ വഴി നിങ്ങളുടെ മറ്റ് 8K PRO ഉപകരണത്തിൽ നിന്ന് എല്ലാം പകർത്തുക</string>
+    <string name="setup_byo_source_description">8K PRO ഒരു പ്ലെയറാണ് — നിങ്ങളുടെ സ്വന്തം Xtream, M3U, അല്ലെങ്കിൽ Stalker ഉറവിടം നൽകുക.</string>
+    <string name="companion_pin_page_title">8K PRO — PIN നൽകുക</string>
+    <string name="companion_add_page_title">8K PRO — ഉറവിടം ചേർക്കുക</string>
+    <string name="companion_saved_page_title">8K PRO — അയച്ചു</string>
+    <string name="companion_backup_page_title">8K PRO — ബാക്കപ്പ് പുനഃസ്ഥാപിക്കുക</string>
+    <string name="companion_backup_description">ഒരു 8K PRO ബാക്കപ്പ് ഫയൽ (.own, അല്ലെങ്കിൽ പഴയ .json) തിരഞ്ഞെടുത്ത് അയയ്ക്കുക അമർത്തുക. അത് ടിവിയിലേക്ക് കൈമാറും — റിമോട്ട് കൺട്രോൾ എടുത്ത് അവിടെ എന്തെല്ലാം പുനഃസ്ഥാപിക്കണമെന്ന് തിരഞ്ഞെടുക്കുക.</string>
+    <string name="companion_image_page_title">8K PRO — പശ്ചാത്തല ചിത്രം</string>
+    <string name="companion_download_page_title">8K PRO — ബാക്കപ്പ് ഡൗൺലോഡ് ചെയ്യുക</string>
+    <string name="companion_download_description">നിങ്ങളുടെ ടിവി ഒരു 8K PRO ബാക്കപ്പ് ഫയൽ തയ്യാറാക്കിയിട്ടുണ്ട്. അത് ഈ ഉപകരണത്തിൽ സംരക്ഷിക്കാൻ ബട്ടൺ അമർത്തുക (8K PRO-ബാക്കപ്പ്.own). അത് സുരക്ഷിതമായ ഒരിടത്ത് സൂക്ഷിക്കുക — പിന്നീട് അതിൽ നിന്ന് പുനഃസ്ഥാപിക്കാം.</string>
+    <string name="local_sync_browser_title">8K PRO ലോക്കൽ സമന്വയം</string>
+    <string name="local_sync_browser_body">ഈ വിലാസം നിങ്ങളുടെ മറ്റ് ഉപകരണത്തിലെ 8K PRO ആപ്പിനുള്ളതാണ്. അവിടെ ലോക്കൽ സമന്വയം തുറന്ന് പട്ടികയിൽ നിന്ന് ഈ ഉപകരണം തിരഞ്ഞെടുക്കുക.</string>
+    <string name="setup_welcome_title">8K PRO-യിലേക്ക് സ്വാഗതം</string>
+    <string name="setup_line_app_icon">ടിവിയുടെ ഹോം സ്ക്രീനിൽ 8K PRO എങ്ങനെ കാണപ്പെടുന്നു</string>
+    <string name="setup_line_app_icon_mobile">നിങ്ങളുടെ ഹോം സ്ക്രീനിൽ 8K PRO എങ്ങനെ കാണപ്പെടുന്നു</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Android auto-backup rules (API 30 and below; API 31+ uses data_extraction_rules.xml).
+
+   OwnTV opts OUT of Android's automatic backup entirely — `android:allowBackup="false"` in the
+   manifest — and these rules are the belt-and-braces second layer.
+
+   WHY: the Room database, the `owntv_settings` DataStore and the `opensub_auth` preferences hold
+   playlist passwords, the Stalker MAC/device identity, the proxy password and the TMDB /
+   OpenSubtitles API keys as PLAINTEXT. That is fine on-device, but the app's stated backup policy is
+   that secrets never leave the device unless the user types a backup password (see BackupManager:
+   no passphrase ⇒ every secret is omitted, and BackupContainer encrypts the whole file when one is
+   given). Automatic backup silently bypassed that policy: it would copy the raw stores to Google
+   Drive or to a new phone/TV with no passphrase involved at all.
+
+   More → Backup & Restore is therefore the ONLY way OwnTV data moves between devices, and it is
+   always an explicit, user-driven, optionally encrypted `.own` file.
+-->
+<full-backup-content>
+    <exclude domain="root" path="." />
+    <exclude domain="file" path="." />
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="external" path="." />
+    <exclude domain="device_root" path="." />
+    <exclude domain="device_file" path="." />
+    <exclude domain="device_database" path="." />
+    <exclude domain="device_sharedpref" path="." />
+</full-backup-content>

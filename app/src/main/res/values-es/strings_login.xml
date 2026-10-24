@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Iniciar sesión</string>
+    <string name="login_subtitle">Introduce el usuario y la contraseña de tu suscripción.</string>
+    <string name="login_username">Usuario</string>
+    <string name="login_username_hint">Tu usuario</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_password_hint">Tu contraseña</string>
+    <string name="login_button">Entrar</string>
+    <string name="login_checking">Comprobando tu cuenta…</string>
+    <string name="login_error_empty">Introduce tu usuario y tu contraseña.</string>
+    <string name="login_error_credentials">Usuario o contraseña incorrectos.</string>
+    <string name="login_error_expired">Tu suscripción ha caducado.</string>
+    <string name="login_error_status">Tu cuenta no está activa (%1$s).</string>
+    <string name="login_error_network">No se pudo conectar con el servidor. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
+    <string name="login_field_help">Pulsa OK para escribir y OK otra vez para volver a la lista.</string>
+    <string name="login_logout">Cerrar sesión</string>
+    <string name="login_logout_message">Tendrás que volver a iniciar sesión para seguir viendo contenido.</string>
+    <string name="login_account">Cuenta: %1$s</string>
+</resources>

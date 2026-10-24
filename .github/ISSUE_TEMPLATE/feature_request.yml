@@ -1,0 +1,41 @@
+name: Feature request / idea
+description: Suggest an improvement for OwnTV
+title: "[Idea] "
+labels: [enhancement]
+body:
+  - type: checkboxes
+    id: mandatory_checks
+    attributes:
+      label: Before you suggest this (required)
+      description: >
+        Some ideas already exist in the app under a different name or in Settings. Please check first —
+        both boxes are mandatory.
+      options:
+        - label: >
+            I read the **[User Guide](https://github.com/ahXN00/OwnTV/blob/main/extras/USER_GUIDE.md)**
+            and checked the app's **Settings** and existing **functions** — this isn't already possible.
+          required: true
+        - label: I searched existing issues and this isn't already requested.
+          required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would you like OwnTV to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why — the problem it solves
+      description: What's painful today, or what would this make better?
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: How you'd expect it to work
+      description: "Optional: where it lives in the UI, how you'd trigger it, examples from other apps."

@@ -1,0 +1,1421 @@
+@file:OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+
+package tv.own.owntv.features.series
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.launch
+import tv.own.owntv.core.customize.CustomizationStore
+import tv.own.owntv.core.customize.SectionCustomizations
+import tv.own.owntv.core.customize.applyCustomizations
+import tv.own.owntv.core.customize.CategoryMove
+import tv.own.owntv.core.customize.CategoryRailEditor
+import tv.own.owntv.core.customize.railCategories
+import tv.own.owntv.core.customize.CustomizeKeys
+import tv.own.owntv.core.database.dao.CategoryDao
+import tv.own.owntv.core.database.dao.ContentOrderDao
+import tv.own.owntv.core.database.dao.CustomCategoryDao
+import tv.own.owntv.core.database.dao.FavoriteDao
+import tv.own.owntv.core.database.dao.HistoryDao
+import tv.own.owntv.core.database.dao.ProgressDao
+import tv.own.owntv.core.database.dao.ProfileDao
+import tv.own.owntv.core.database.dao.SeriesDao
+import tv.own.owntv.core.database.dao.SeriesSortOrderDao
+import tv.own.owntv.core.database.dao.SourceDao
+import tv.own.owntv.core.database.dao.resolveExistingProfileId
+import tv.own.owntv.core.database.entity.DownloadEntity
+import tv.own.owntv.core.database.entity.EpisodeEntity
+import tv.own.owntv.core.database.entity.FavoriteEntity
+import tv.own.owntv.core.database.entity.PlaybackProgressEntity
+import tv.own.owntv.core.database.entity.ContentOrderEntity
+import tv.own.owntv.core.database.entity.SeriesEntity
+import tv.own.owntv.core.database.entity.WatchHistoryEntity
+import tv.own.owntv.core.launcher.LauncherIntegrationRepository
+import tv.own.owntv.core.model.MediaType
+import tv.own.owntv.core.util.throttleLatest
+import tv.own.owntv.core.download.DownloadManager
+import tv.own.owntv.core.repository.EpisodeLoad
+import tv.own.owntv.core.repository.SeriesRepository
+import tv.own.owntv.core.storage.StorageAccess
+import tv.own.owntv.core.storage.MediaFolders
+import tv.own.owntv.features.customize.MoveTarget
+import tv.own.owntv.core.customize.CategoryRestorePlan
+import tv.own.owntv.core.customize.planCategoryRestore
+import tv.own.owntv.core.customize.restoreCategoryToDefault
+import tv.own.owntv.features.live.LiveRailItem
+import tv.own.owntv.core.repository.activeProfileSources
+import tv.own.owntv.core.settings.SettingsRepository
+import tv.own.owntv.player.MediaMeta
+import tv.own.owntv.player.OwnTVPlayer
+import tv.own.owntv.player.PlaylistItem
+import tv.own.owntv.ui.components.OwnTVIcon
+import tv.own.owntv.core.live.LiveKey
+import tv.own.owntv.core.live.parseLiveKey
+import tv.own.owntv.core.live.serialize
+
+class SeriesViewModel(
+    private val seriesDao: SeriesDao,
+    /** Lets the browse screen tell core's drain which category to fill first. */
+    private val catalogPriority: tv.own.owntv.core.sync.CatalogPriority,
+    private val categoryDao: CategoryDao,
+    private val favoriteDao: FavoriteDao,
+    private val historyDao: HistoryDao,
+    private val userDataWriter: tv.own.owntv.core.backup.UserDataWriter,
+    private val progressDao: ProgressDao,
+    private val profileDao: ProfileDao,
+    private val sourceDao: SourceDao,
+    private val seriesRepository: SeriesRepository,
+    private val settings: SettingsRepository,
+    private val customize: CustomizationStore,
+    private val player: OwnTVPlayer,
+    private val downloadManager: DownloadManager,
+    private val launcherIntegrationRepository: LauncherIntegrationRepository,
+    private val contentOrderDao: ContentOrderDao,
+    private val customCategoryDao: CustomCategoryDao,
+    private val seriesSortOrderDao: SeriesSortOrderDao,
+    private val metadata: tv.own.owntv.core.metadata.MetadataRepository,
+    private val externalPlayerLauncher: tv.own.owntv.core.player.ExternalPlayerLauncher,
+    private val streamUrlResolver: tv.own.owntv.core.stalker.StreamUrlResolver,
+    private val subtitleController: tv.own.owntv.core.subtitles.SubtitleController,
+) : ViewModel() {
+
+    /** The categories' search text, held here so it survives the player (see LiveViewModel). */
+    private val _categoryQuery = kotlinx.coroutines.flow.MutableStateFlow("")
+    val categoryQuery: kotlinx.coroutines.flow.StateFlow<String> = _categoryQuery
+    fun setCategoryQuery(query: String) { _categoryQuery.value = query }
+
+    data class SeriesMoveState(val items: List<SeriesEntity>, val activeIndex: Int, val contextKey: String)
+    private val _moveState = MutableStateFlow<SeriesMoveState?>(null)
+    val moveState: StateFlow<SeriesMoveState?> = _moveState.asStateFlow()
+
+    /** Hide and reorder a category from the rail — the same editor Settings → Customize writes through. */
+    private val categoryEditor = CategoryRailEditor(customize, categoryDao, profileDao)
+
+    private val _categoryMoveState = MutableStateFlow<CategoryMove?>(null)
+    val categoryMoveState: StateFlow<CategoryMove?> = _categoryMoveState.asStateFlow()
+
+    private data class Ctx(
+        val profileId: Long,
+        val sourceIds: List<Long>,
+        val sourceNames: Map<Long, String>,
+    )
+    // Observe the active profile's sources reactively so adding/removing a playlist refreshes Series
+    // immediately (was read once at startup, so a new playlist showed nothing until app restart).
+    private val ctx: StateFlow<Ctx> = activeProfileSources(settings, sourceDao)
+        .map { aps ->
+            val ids = aps.seriesSourceIds
+            Ctx(aps.profileId, ids, aps.sources.filter { it.id in ids }.associate { it.id to it.name })
+        }
+        .distinctUntilChanged()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Ctx(-1L, emptyList(), emptyMap()))
+
+    private val folderContextKeys: StateFlow<Map<Long, String>> = ctx
+        .flatMapLatest { c ->
+            if (c.profileId < 0) flowOf(emptyMap())
+            else categoryDao.observe(c.sourceIds, MediaType.SERIES).map { cats ->
+                cats.associateBy({ it.id }, { CustomizeKeys.category(it) })
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    /** Contexts that actually have manual-order rows: only those folders pay the
+     *  unindexable content_order join-sort; everything else stays on the plain indexed query. */
+    private val orderedContexts: StateFlow<Set<String>> = ctx
+        .flatMapLatest { c ->
+            if (c.profileId < 0) flowOf(emptySet())
+            else contentOrderDao.observeContextKeys(c.profileId, MediaType.SERIES).map { it.toSet() }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+
+    /** This profile's hide/rename/reorder customizations for Series. */
+    private val custom: StateFlow<SectionCustomizations> = ctx
+        .flatMapLatest { c ->
+            if (c.profileId < 0) flowOf(SectionCustomizations())
+            else customize.observe(c.profileId, MediaType.SERIES)
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SectionCustomizations())
+
+    /** The user's custom combined categories with live member counts — the "Move to…" dialog's list. */
+    val moveTargets: StateFlow<List<MoveTarget>> = combine(ctx, custom) { c, cust -> c to cust }
+        .flatMapLatest { (c, cust) ->
+            if (c.profileId < 0 || cust.customCategories.isEmpty()) flowOf(emptyList())
+            else customCategoryDao.observeCountsByContexts(
+                c.profileId,
+                MediaType.SERIES,
+                cust.customCategories.map { it.id },
+                c.sourceIds.ifEmpty { listOf(-1L) },
+            ).map { counts ->
+                cust.customCategories.map { cc ->
+                    MoveTarget(
+                        id = cc.id,
+                        displayName = cust.categoryNames[cc.id] ?: cc.name,
+                        count = counts.firstOrNull { it.contextKey == cc.id }?.count ?: 0,
+                    )
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** The stable key of a provider folder ([null] when the folder vanished) — the Move dialog's origin. */
+    fun folderKey(id: Long): String? = folderContextKeys.value[id]
+
+    /** Creates a custom category — the Move dialog's "＋ New category…" flow. */
+    fun createCustomCategory(name: String) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            customize.createCustomCategory(pid, MediaType.SERIES, name)
+        }
+    }
+
+    /**
+     * Moves (or copies, [keepInOrigin]) one series into a custom category. The item is
+     * appended at the category's tail (maxPosition + 1). Without [keepInOrigin] the item leaves its
+     * origin: a favorite row is deleted, a custom-category membership row is deleted, and a provider
+     * folder is marked in movedFromOrigin — the pager chain then drops it from that folder while
+     * keeping it in All / search / recent.
+     */
+    fun moveToCategory(itemKey: String, itemId: Long, originKey: String, targetId: String, keepInOrigin: Boolean) {
+        if (targetId == originKey) return
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            customCategoryDao.appendItem(pid, MediaType.SERIES, targetId, itemId)
+            if (!keepInOrigin) {
+                when {
+                    originKey == ContentOrderEntity.FAV_CONTEXT -> userDataWriter.removeFavorite(pid, MediaType.SERIES, itemId)
+                    CustomizeKeys.isCustom(originKey) -> userDataWriter.removeCustomCategoryMember(pid, MediaType.SERIES, originKey, itemId)
+                    else -> customize.setItemMovedFromOrigin(pid, MediaType.SERIES, itemKey, originKey, moved = true)
+                }
+            }
+        }
+    }
+
+    /**
+     * Category DB ids of this profile's hidden Series categories — so hiding a category hides its
+     * series everywhere (All, search, Home rails), not just the rail folder (mirrors Live TV).
+     */
+    private val hiddenCategoryIds: StateFlow<Set<Long>> = ctx
+        .flatMapLatest { c ->
+            if (c.profileId < 0) {
+                flowOf(emptySet())
+            } else {
+                combine(categoryDao.observe(c.sourceIds, MediaType.SERIES), custom, profileDao.observeById(c.profileId)) { cats, cust, profile ->
+                    tv.own.owntv.core.content.AdultCategoryClassifier.hiddenCategoryIds(
+                        cats,
+                        cust.hiddenCategories,
+                        profile?.isKids == true,
+                    )
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
+
+    /** Customizations + resolved hidden-category ids, bundled so the list pipeline takes one flow. */
+    private data class CustState(val cust: SectionCustomizations, val hiddenCats: Set<Long>)
+    private val custResolved: StateFlow<CustState> = combine(custom, hiddenCategoryIds) { c, h -> CustState(c, h) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CustState(SectionCustomizations(), emptySet()))
+
+    /** List ordering for this section (Provider order vs A–Z), persisted in DataStore. */
+    val sortMode: StateFlow<SettingsRepository.SortMode> = settings.sortSeries
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SettingsRepository.SortMode.ALPHA)
+
+    fun setSort(mode: SettingsRepository.SortMode) {
+        viewModelScope.launch { settings.setSortSeries(mode) }
+    }
+
+    val viewMode: StateFlow<SettingsRepository.VodViewMode> = settings.vodViewMode
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SettingsRepository.VodViewMode.GRID)
+
+    fun toggleViewMode() {
+        viewModelScope.launch {
+            settings.setVodViewMode(
+                if (viewMode.value == SettingsRepository.VodViewMode.GRID) SettingsRepository.VodViewMode.LIST
+                else SettingsRepository.VodViewMode.GRID,
+            )
+        }
+    }
+
+    private val _selected = MutableStateFlow<LiveKey>(LiveKey.All)
+    val selectedKey: StateFlow<LiveKey> = _selected.asStateFlow()
+
+    // Bumped after a favourite/history mutation so the pager rebuilds its (manual, non-reactive)
+    // PagingSource. Without this, unfavouriting on the Favorites category leaves the removed series in
+    // the paged snapshot, which breaks focus restore (the stale row disposes under focus).
+    private val _listRefresh = MutableStateFlow(0)
+    private fun refreshList() { _listRefresh.value++ }
+
+    private val _search = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _search.asStateFlow()
+
+    private val _selectedSeries = MutableStateFlow<SeriesEntity?>(null)
+    val selectedSeries: StateFlow<SeriesEntity?> = _selectedSeries.asStateFlow()
+
+    /** On-demand TMDB enrichment for the focused series (show-level), tagged with the series id to avoid
+     *  stale meta during the debounce. Null when off or no confident match. */
+    /** Bumped by [refetchSeriesMeta] to force the focused series' TMDB resolve to re-run after clearing its cache. */
+    private val _seriesMetaTick = MutableStateFlow(0L)
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    /** TMDB details already resolved this session, by title id: shown without the focus debounce. */
+    private val resolvedMeta = java.util.concurrent.ConcurrentHashMap<Long, tv.own.owntv.core.database.entity.MetadataCacheEntity>()
+
+    val selectedSeriesMeta: StateFlow<SeriesMeta?> = combine(_selectedSeries, _seriesMetaTick) { s, tick -> s to tick }
+        .distinctUntilChanged { a, b -> a.first?.id == b.first?.id && a.second == b.second }
+        // See MetadataRepository.FOCUS_DEBOUNCE_MS — 700 ms so scrolling past cards costs nothing.
+        // A title resolved once this session shows at once; only an unseen one waits the focus debounce
+        // (FOCUS_DEBOUNCE_MS: scrolling past cards must cost nothing), then reads the DB cache or TMDB.
+        .transformLatest { (s, _) ->
+            if (s == null) { emit(null); return@transformLatest }
+            resolvedMeta[s.id]?.let { emit(SeriesMeta(s.id, it)); return@transformLatest }
+            delay(tv.own.owntv.core.metadata.MetadataRepository.FOCUS_DEBOUNCE_MS)
+            val cache = runCatching { metadata.resolveSeries(s) }.getOrNull()
+            if (cache != null) {
+                if (resolvedMeta.size > 500) resolvedMeta.clear()
+                resolvedMeta[s.id] = cache
+            }
+            emit(SeriesMeta(s.id, cache))
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    data class SeriesMeta(val seriesId: Long, val cache: tv.own.owntv.core.database.entity.MetadataCacheEntity?)
+
+    /**
+     * Poster fallback for tiles the provider gave no artwork for — see MovieViewModel.cachedPosters
+     * for the reasoning. Cache-only: a DB read, never a TMDB call.
+     */
+    private val _posterProbe = MutableStateFlow<List<SeriesEntity>>(emptyList())
+    private val _cachedPosters = MutableStateFlow<Map<Long, String>>(emptyMap())
+    val cachedPosters: StateFlow<Map<Long, String>> = _cachedPosters.asStateFlow()
+
+    fun onPosterlessVisible(series: List<SeriesEntity>) { _posterProbe.value = series }
+
+    /** Source mode — the pane/details use it to flip provider/TMDB precedence. */
+    val metadataMode: StateFlow<tv.own.owntv.core.metadata.MetadataMode> = settings.metadataMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), tv.own.owntv.core.metadata.MetadataMode.PROVIDER_PLUS_TMDB)
+
+    private val _openedSeries = MutableStateFlow<SeriesEntity?>(null)
+    val openedSeries: StateFlow<SeriesEntity?> = _openedSeries.asStateFlow()
+
+    // The series whose episode queue is currently playing — drives the player HUD's favorite toggle
+    // (distinct from _openedSeries, which tracks the browse/detail selection).
+    private val _playingSeries = MutableStateFlow<SeriesEntity?>(null)
+    val playingSeries: StateFlow<SeriesEntity?> = _playingSeries.asStateFlow()
+
+    private val _selectedSeason = MutableStateFlow(1)
+    val selectedSeason: StateFlow<Int> = _selectedSeason.asStateFlow()
+
+    private val _lastPlayedEpisodeId = MutableStateFlow<Long?>(null)
+    val lastPlayedEpisodeId: StateFlow<Long?> = _lastPlayedEpisodeId.asStateFlow()
+
+    private val _episodesLoading = MutableStateFlow(false)
+    val episodesLoading: StateFlow<Boolean> = _episodesLoading.asStateFlow()
+
+    /** Why the opened show has no episodes when the provider refused or failed the request; null otherwise. */
+    private val _episodesFailure = MutableStateFlow<String?>(null)
+    val episodesFailure: StateFlow<String?> = _episodesFailure.asStateFlow()
+
+    /**
+     * The queue item the player is actually on, pinned when it starts playing — the only thing a
+     * resume position may be written against.
+     *
+     * Progress used to be matched by searching the *opened* series' episode list for the player's
+     * current URL, and the profile was read at save time. Both were wrong: open a different series
+     * while an episode plays and the match silently stopped saving, a Stalker episode URL is minted
+     * per play and never matched at all, and switching profile mid-episode wrote the position into
+     * the new profile's Continue Watching.
+     */
+    private data class PlayingEpisodeRef(val episode: EpisodeEntity, val profileId: Long, val contentKey: String?)
+
+    private var playingEpisodeRef: PlayingEpisodeRef? = null
+
+    init {
+        // Periodically persist the playing episode's resume position (same cadence as movies).
+        // Episodes were previously *read* on play but never saved — resume never actually worked.
+        // This is the crash backstop; the real saves are on pause and on leaving the player.
+        viewModelScope.launch {
+            while (isActive) {
+                delay(10_000)
+                saveEpisodeProgressNow()
+            }
+        }
+        // Save on pause too — pausing and walking away otherwise loses up to 10s, and everything
+        // since the last tick if the app is killed while paused.
+        viewModelScope.launch {
+            var wasPlaying = false
+            player.isPlaying.collect { playing ->
+                if (wasPlaying && !playing) saveEpisodeProgressNow()
+                wasPlaying = playing
+            }
+        }
+        // Auto-play continuation across seasons: the player advances within a season itself, then signals
+        // here when a season's last episode finishes so we can start the next season's first episode.
+        viewModelScope.launch {
+            player.queueEnded.collect { continueToNextSeason() }
+        }
+        // Resolve the poster fallback for what is on screen (mirrors MovieViewModel). Debounced so a
+        // fast scroll issues one query when it settles, and re-run on the refresh tick so a
+        // "Refetch TMDB details" re-reads the entry it dropped.
+        viewModelScope.launch {
+            combine(_posterProbe, _seriesMetaTick) { probe, _ -> probe }
+                .debounce(250)
+                .collectLatest { probe ->
+                    val wanted = probe.filterNot { it.id in _cachedPosters.value }
+                    if (wanted.isEmpty()) return@collectLatest
+                    val found = runCatching { metadata.cachedSeriesPosters(wanted) }.getOrDefault(emptyMap())
+                    if (found.isEmpty()) return@collectLatest
+                    // Bounded: a long browse of a huge catalog would otherwise grow this forever.
+                    val base = if (_cachedPosters.value.size > 500) emptyMap() else _cachedPosters.value
+                    _cachedPosters.value = base + found
+                }
+        }
+        // In-season advance (auto-next / HUD prev-next) happens inside the player — re-point the
+        // subtitle context at the NEW episode, else a subtitle search or replay
+        // restore mid-episode-2 would still target episode 1. Index into the queue this VM submitted.
+        viewModelScope.launch {
+            player.queueItemChanged.collect { index ->
+                val q = playingQueue ?: return@collect
+                val ep = q.episodes.getOrNull(index) ?: return@collect
+                // The auto-advanced episode is now the one progress is saved against. No flush of the
+                // outgoing one here: the player already loaded the new item, so its position has been
+                // reset and saving now would overwrite a finished episode with ~0.
+                playingEpisodeRef = PlayingEpisodeRef(
+                    ep, q.profileId, tv.own.owntv.core.player.enginePinKey(q.show.sourceId, "EPISODE", ep.remoteId),
+                )
+                subtitleController.setEpisode(q.profileId, q.show, ep, q.parentTmdbId)
+            }
+        }
+    }
+
+    /** The episode queue currently loaded into the player, for mapping its index signals back to
+     *  episodes (subtitle context on auto-advance). Replaced on every [playEpisodeQueue]. */
+    private data class PlayingQueue(
+        val show: SeriesEntity,
+        val episodes: List<EpisodeEntity>,
+        val profileId: Long,
+        val parentTmdbId: Long?,
+    )
+
+    private var playingQueue: PlayingQueue? = null
+
+    /** A season's last episode finished with auto-play on — start the next season's first episode, if any.
+     *  Matches the just-finished episode by its stream URL (robust to in-season auto-advance). The next
+     *  season is the next in watching order: a gap in the numbering no longer ends the show, and the
+     *  Specials follow the finale rather than leading into Season 1. */
+    private fun continueToNextSeason() {
+        val url = player.currentMediaUrl ?: return
+        val all = episodes.value
+        val finished = all.firstOrNull { it.streamUrl == url } ?: return // not one of this series' episodes
+        val nextSeason = tv.own.owntv.core.content.EpisodeOrder.seasonAfter(all.map { it.seasonNumber }, finished.seasonNumber)
+            ?: return // no next season — series finished
+        val nextEpisode = all
+            .filter { it.seasonNumber == nextSeason }
+            .minByOrNull { it.episodeNumber } ?: return
+        playEpisode(nextEpisode)
+    }
+
+    /**
+     * True while the player still holds the episode [ref] was pinned for. Matches on the stable engine
+     * pin key; rows with no `remoteId` have no such key and fall back to the stream URL, which for
+     * those rows is exactly as stable as it always was (see `enginePinKey`).
+     */
+    private fun playerIsOn(ref: PlayingEpisodeRef): Boolean =
+        if (ref.contentKey != null) player.currentMediaContentKey == ref.contentKey
+        else player.currentMediaUrl != null && player.currentMediaUrl == ref.episode.streamUrl
+
+    /** Saves the position of the episode the player is actually on — including one the player itself
+     *  switched to via prev/next or auto-advance, which re-pins the ref in [init]. */
+    fun saveEpisodeProgressNow() {
+        val ref = playingEpisodeRef ?: return
+        val ep = ref.episode
+        if (player.isLiveContent || !playerIsOn(ref)) return
+        val pos = player.position.value
+        val dur = player.duration.value
+        if (pos > 0 && dur > 0) {
+            viewModelScope.launch {
+                // The position belongs to the profile that started playback. If the user switched
+                // profiles mid-episode, drop it rather than writing it into the new profile's list.
+                val pid = currentProfileId() ?: return@launch
+                if (pid != ref.profileId) return@launch
+                Log.d(TAG, "saveEpisodeProgressNow episodeId=${ep.id} profile=$pid positionMs=$pos durationMs=$dur")
+                runCatching {
+                    progressDao.save(
+                        PlaybackProgressEntity(profileId = pid, mediaType = MediaType.EPISODE, itemId = ep.id, positionMs = pos, durationMs = dur),
+                    )
+                }.onFailure { t ->
+                    Log.w(TAG, "saveEpisodeProgressNow progress save failed episodeId=${ep.id} profile=$pid", t)
+                }
+                launcherIntegrationRepository.publishEpisodeProgress(pid, ep.id, pos, dur)
+            }
+        }
+    }
+
+    val railItems: StateFlow<List<LiveRailItem>> = ctx
+        .flatMapLatest { c ->
+            if (c.profileId < 0) flowOf(defaultRail)
+            else combine(
+                categoryDao.observe(c.sourceIds, MediaType.SERIES),
+                customize.observe(c.profileId, MediaType.SERIES),
+                sortMode,
+                profileDao.observeById(c.profileId),
+            ) { cats, cust, sort, profile ->
+                // A–Z also sorts the category folders (custom categories included); manually moved
+                // categories stay pinned first. Custom categories ride the SAME customization keys,
+                // so renames/hides/reorders apply to them with no extra code.
+                val folders = cats.railCategories(
+                    cust,
+                    kids = profile?.isKids == true,
+                    alphaRest = sort == SettingsRepository.SortMode.ALPHA,
+                )
+                val multiSourceNames = c.sourceNames.takeIf { it.size > 1 }.orEmpty()
+                val categoriesById = cats.associateBy { it.id }
+                defaultRail + folders.map { e ->
+                    LiveRailItem(
+                        key = e.categoryId?.let { LiveKey.Folder(it) } ?: LiveKey.Custom(e.customId!!),
+                        title = e.displayName,
+                        providerName = e.categoryId
+                            ?.let(categoriesById::get)
+                            ?.sourceId
+                            ?.let(multiSourceNames::get),
+                        sourceId = e.categoryId?.let(categoriesById::get)?.sourceId,
+                    )
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), defaultRail)
+
+    val series: Flow<PagingData<SeriesEntity>> = combine(
+        _selected, ctx, _search.map { it.trim() }.debounce(300).distinctUntilChanged(), sortMode, _listRefresh,
+    ) { key, c, query, sort, _ -> Args(key, c, query, sort) }
+        .combine(custResolved) { args, cs -> args to cs }
+        // Rebuild the pager when a folder gains/loses manual order: the fast-path plain
+        // PagingSource doesn't observe content_order, so the switch must recreate it.
+        .combine(orderedContexts) { p, _ -> p }
+        .flatMapLatest { (args, cs) ->
+            // Hidden items/categories are filtered on each fresh PagingData inside the pager chain —
+            // a customization change re-creates the pager (same pattern as Live TV).
+            Pager(PagingConfig(pageSize = 60, prefetchDistance = 30, initialLoadSize = 90, maxSize = 300)) {
+                pagingSource(args.key, args.ctx, args.query, args.sort)
+            }.flow.map { paging ->
+                val cust = cs.cust
+                val movedFrom = cust.movedFromOrigin
+                if (cust.hiddenItems.isEmpty() && cust.itemNames.isEmpty() && cs.hiddenCats.isEmpty() && movedFrom.isEmpty()) paging
+                else paging.filter { s ->
+                    CustomizeKeys.series(s) !in cust.hiddenItems &&
+                        (s.categoryId == null || s.categoryId !in cs.hiddenCats) &&
+                        // Moved-out items leave ONLY their origin folder (they stay in All/search).
+                        (movedFrom[CustomizeKeys.series(s)]?.let { origin ->
+                            args.key !is LiveKey.Folder || origin != folderContextKeys.value[args.key.id]
+                        } ?: true)
+                }.map { s ->
+                    // Bulk-renamed titles (Customize items screen) show here like Live TV does.
+                    cust.itemNames[CustomizeKeys.series(s)]?.let { s.copy(name = it) } ?: s
+                }
+            }
+        }
+        .cachedIn(viewModelScope)
+
+    private data class Args(val key: LiveKey, val ctx: Ctx, val query: String, val sort: SettingsRepository.SortMode)
+
+    val count: StateFlow<Int> = combine(_selected, ctx, hiddenCategoryIds) { key, c, hidden -> Triple(key, c, hidden) }
+        .flatMapLatest { (key, c, hidden) -> countFlow(key, c, hidden).throttleLatest() } // Cap live COUNT re-runs during bulk sync
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    /** The count beside every category (Stage sheet / column): one grouped query for the folders. */
+    val railCounts: StateFlow<Map<LiveKey, Int>> = combine(ctx, hiddenCategoryIds, railItems) { c, hidden, items -> Triple(c, hidden, items) }
+        .flatMapLatest { (c, hidden, items) ->
+            val single = items.filter { it.key !is LiveKey.Folder }.map { item -> countFlow(item.key, c, hidden).map { mapOf(item.key to it) } }
+            val folders = seriesDao.observeCountsByCategory(c.sourceIds.ifEmpty { listOf(-1L) })
+                .map { rows -> rows.associate { LiveKey.Folder(it.categoryId) as LiveKey to it.itemCount } }
+            combine(single + folders) { parts -> parts.fold(emptyMap<LiveKey, Int>()) { acc, m -> acc + m } }.throttleLatest()
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    /** Which playlist a show or category comes from (GOLD / JR), only while more than one is shown. */
+    val playlistMarks: StateFlow<Map<Long, tv.own.owntv.ui.stage.PlaylistMark>> = activeProfileSources(settings, sourceDao)
+        .map { aps ->
+            if (aps.seriesSourceIds.size < 2) emptyMap()
+            else aps.sources.withIndex().associate { (i, s) -> s.id to tv.own.owntv.ui.stage.PlaylistMark.of(s.name, i) }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    /** Whether "Remove from history" has anything to remove for [series]. */
+    suspend fun isInHistory(series: SeriesEntity): Boolean {
+        val pid = currentProfileId() ?: return false
+        return historyDao.exists(pid, MediaType.SERIES, series.id)
+    }
+
+    val favoriteIds: StateFlow<Set<Long>> = ctx
+        .flatMapLatest { favoriteDao.observeFavoriteIds(it.profileId, MediaType.SERIES) }
+        .map { it.toSet() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+
+    /** Per show, how far into its most recently watched episode this profile is — the bar on the
+     *  show's poster and list row. A finished latest episode has no entry: nothing left to resume. */
+    val seriesProgress: StateFlow<Map<Long, Float>> = ctx
+        .flatMapLatest { c -> if (c.profileId < 0) flowOf(emptyList()) else progressDao.observeLatestEpisodeProgressPerSeries(c.profileId) }
+        .map { rows ->
+            rows.filter { it.durationMs > 0 && it.positionMs < (it.durationMs * 0.95f).toLong() }
+                .associate { it.seriesId to it.positionMs.toFloat() / it.durationMs }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    val episodes: StateFlow<List<EpisodeEntity>> = _openedSeries
+        .flatMapLatest { s -> if (s == null) flowOf(emptyList()) else seriesDao.episodesBySeries(s.id) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /** Per-episode resume progress for the open series (keyed by episode id). Reactive so the UI's watched
+     *  indicators, season counts, "Hide watched" filter, and "Next up" card update the instant a position
+     *  is saved — no manual refresh needed. Re-seeds when the profile or open series changes. */
+    val episodeProgress: StateFlow<Map<Long, PlaybackProgressEntity>> =
+        combine(ctx, _openedSeries) { c, s -> c to s }
+            .flatMapLatest { (c, s) ->
+                if (c.profileId < 0 || s == null) flowOf(emptyList())
+                else progressDao.observeSeriesEpisodeProgress(c.profileId, s.id)
+            }
+            .map { list -> list.associateBy { it.itemId } }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    /** Episode ids in the open series that have been watched to ≥95% — drives ✓ marks, season "x/y" counts,
+     *  and the "Hide watched" filter. */
+    val completedEpisodeIds: StateFlow<Set<Long>> = episodeProgress
+        .map { prog -> prog.values.filter { isEpisodeCompleted(it) }.map { it.itemId }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
+
+    /** The episode to surface as the "Next up" Play card: the last-watched one if still in progress (resume),
+     *  the first episode after a completed one, the first episode when nothing's been watched yet, or null
+     *  once the whole series is finished (card hides). Mirrors LauncherRecommendationPlanner's CONTINUE/NEXT
+     *  logic (threshold 0.95). */
+    val nextUpEpisodeId: StateFlow<Long?> = combine(episodes, episodeProgress) { eps, prog ->
+        if (eps.isEmpty()) null
+        else {
+            val ordered = eps.sortedWith(tv.own.owntv.core.content.EpisodeOrder.episodes)
+            val lastWatched = prog.values.maxByOrNull { it.updatedAt }
+            when {
+                lastWatched == null -> ordered.first().id
+                isEpisodeCompleted(lastWatched) -> {
+                    val idx = ordered.indexOfFirst { it.id == lastWatched.itemId }
+                    if (idx in 0 until ordered.size - 1) ordered[idx + 1].id else null
+                }
+                else -> ordered.firstOrNull { it.id == lastWatched.itemId }?.id
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** "Hide watched" toggle for the episode list (off by default). */
+    private val _hideWatched = MutableStateFlow(false)
+    val hideWatched: StateFlow<Boolean> = _hideWatched.asStateFlow()
+    fun setHideWatched(value: Boolean) { _hideWatched.value = value }
+
+    /** ≥95% of duration watched = completed (mirrors LauncherRecommendationPlanner.isCompleted). */
+    private fun isEpisodeCompleted(p: PlaybackProgressEntity): Boolean =
+        p.durationMs > 0 && p.positionMs >= (p.durationMs * 0.95f).toLong()
+
+    /** Mark an episode as watched (shows ✓) without playing it. A 1ms/1ms sentinel satisfies the ≥95%
+     *  completed rule while keeping Play restarting from ~0 (NOT the end) — a real positionMs=durationMs
+     *  would make AUTO/ASK resume jump to the credits. Replaces any existing resume position; the fresh
+     *  updatedAt also re-orders "next up" past it. Reactive, so the ✓ appears immediately. */
+    fun markEpisodeWatched(episode: EpisodeEntity) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            progressDao.save(
+                PlaybackProgressEntity(profileId = pid, mediaType = MediaType.EPISODE, itemId = episode.id, positionMs = 1L, durationMs = 1L),
+            )
+        }
+    }
+
+    /** Mark an episode as unwatched — clears its resume position (removes the ✓ and any progress bar). */
+    fun markEpisodeUnwatched(episode: EpisodeEntity) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            userDataWriter.clearProgress(pid, MediaType.EPISODE, episode.id)
+        }
+    }
+
+    /**
+     * Set while this view model is serving More -> Favourites or More -> History rather than the
+     * browse section. Those screens are one folder each: the selection is theirs to fix, and it must
+     * not be persisted as the remembered category.
+     */
+    private var lockedKey: LiveKey? = null
+
+    /** What the browse section was showing before the pin, so [unlock] can put it back. */
+    private var previousKey: LiveKey? = null
+
+    fun lock(key: LiveKey) {
+        if (lockedKey == null) previousKey = _selected.value
+        lockedKey = key
+        _selected.value = key
+    }
+
+    /**
+     * Release the pin and put the browse section back where it was.
+     *
+     * **This is not optional bookkeeping.** On the television this view model is a single instance
+     * shared between the browse section and the More screens, so a pin that outlived the screen that
+     * took it froze the section's category rail — focusable, but every click a no-op. The screen that
+     * locks therefore unlocks on dispose.
+     */
+    fun unlock() {
+        val previous = previousKey ?: return
+        lockedKey = null
+        previousKey = null
+        _selected.value = previous
+    }
+
+    fun select(key: LiveKey) {
+        if (lockedKey != null) return
+        _selected.value = key
+        // Core's lazy-catalogue drain fills categories in the provider's order; tell it the user is
+        // here so this one is served next. A no-op for every playlist that was not
+        // lazily added, and for a category that is already complete.
+        if (key is LiveKey.Folder) {
+            viewModelScope.launch { runCatching { catalogPriority.requestFirst(key.id) } }
+        } else {
+            catalogPriority.clear()
+        }
+    }
+    fun setSearchQuery(query: String) { _search.value = query }
+    fun onSeriesFocused(s: SeriesEntity) { _selectedSeries.value = s }
+
+    /**
+     * Manual "Refetch TMDB details": clear this series' cached match/details (incl. a 7-day
+     * negative cache) and re-trigger [metadata.resolveSeries] for the focused series via the series meta tick.
+     */
+    fun refetchSeriesMeta(series: SeriesEntity) {
+        viewModelScope.launch {
+            runCatching { metadata.clearSeries(series) }
+            resolvedMeta.remove(series.id)
+            _cachedPosters.value = _cachedPosters.value - series.id
+            _seriesMetaTick.value++
+        }
+    }
+
+    /**
+     * Prefill for the "Set TMDB name" dialog: the saved override if any, else the cleaned
+     * provider title. [hasOverride] drives the dialog's Clear button. Episodes inherit the series match, so
+     * the override lives at the series level (no separate episode override).
+     */
+    data class TmdbNamePrefill(val title: String, val year: Int?, val hasOverride: Boolean)
+
+    suspend fun seriesTmdbNamePrefill(series: SeriesEntity): TmdbNamePrefill {
+        metadata.seriesOverride(series)?.let { return TmdbNamePrefill(it.title, it.year, hasOverride = true) }
+        val norm = tv.own.owntv.core.metadata.TitleNormalizer.normalize(series.name)
+        return TmdbNamePrefill(norm.query, series.year ?: norm.year, hasOverride = false)
+    }
+
+    /** Save the hand-typed override and force a re-resolve under the new query. */
+    fun setSeriesTmdbName(series: SeriesEntity, title: String, year: Int?) {
+        viewModelScope.launch {
+            runCatching { metadata.setSeriesOverride(series, title, year) }
+            resolvedMeta.remove(series.id)
+            _seriesMetaTick.value++
+        }
+    }
+
+    /** Remove the override and re-resolve with the cleaned provider title. */
+    fun clearSeriesTmdbName(series: SeriesEntity) {
+        viewModelScope.launch {
+            runCatching { metadata.clearSeriesOverride(series) }
+            resolvedMeta.remove(series.id)
+            _seriesMetaTick.value++
+        }
+    }
+
+    /**
+     * Season/episode order for the OPEN series (the "Sorting" popup). Per profile and per series,
+     * backed by [SeriesSortOrderDao]; a show the user never changed reports [SeriesOrder.DEFAULT].
+     *
+     * PRESENTATION ONLY — playback (autoplay next episode) always runs in episode-number order.
+     */
+    data class SeriesOrder(val seasonsDescending: Boolean = false, val episodesDescending: Boolean = false) {
+        companion object { val DEFAULT = SeriesOrder() }
+    }
+
+    val seriesOrder: StateFlow<SeriesOrder> = combine(ctx, _openedSeries) { c, s -> c.profileId to s }
+        .flatMapLatest { (profileId, show) ->
+            if (show == null || profileId < 0) flowOf(SeriesOrder.DEFAULT)
+            else seriesSortOrderDao.observe(profileId, show.id).map { row ->
+                if (row == null) SeriesOrder.DEFAULT
+                else SeriesOrder(row.seasonsDescending, row.episodesDescending)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SeriesOrder.DEFAULT)
+
+    /** Applied immediately from the popup; writes one upserted row for the open series. */
+    fun setSeriesOrder(seasonsDescending: Boolean, episodesDescending: Boolean) {
+        val show = _openedSeries.value ?: return
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            seriesSortOrderDao.setOrder(pid, show.id, seasonsDescending, episodesDescending)
+        }
+    }
+
+    fun selectSeason(season: Int) { _selectedSeason.value = season }
+
+    // --- Episode enrichment: the focused episode's TMDB still/plot/rating for the right detail pane ---
+    private val _selectedEpisode = MutableStateFlow<EpisodeEntity?>(null)
+    val selectedEpisode: StateFlow<EpisodeEntity?> = _selectedEpisode.asStateFlow()
+    fun onEpisodeFocused(ep: EpisodeEntity) { _selectedEpisode.value = ep }
+
+    /**
+     * Manual "Refetch TMDB details": clear this episode's cache AND its show's match (so an
+     * episode whose show was negative-cached also recovers), then re-trigger [metadata.resolveEpisode] for the
+     * focused episode via the episode meta tick.
+     */
+    fun refetchEpisodeMeta(series: SeriesEntity, episode: EpisodeEntity) {
+        viewModelScope.launch {
+            runCatching { metadata.clearEpisode(series, episode) }
+            _episodeMetaTick.value++
+        }
+    }
+
+    /** TMDB metadata for the focused episode, tagged with its id to avoid stale meta during the debounce.
+     *  Resolved lazily against the currently opened show. */
+    /** Bumped by [refetchEpisodeMeta] to force the focused episode's TMDB resolve to re-run after clearing its cache. */
+    private val _episodeMetaTick = MutableStateFlow(0L)
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val selectedEpisodeMeta: StateFlow<EpisodeMeta?> = combine(_selectedEpisode, _episodeMetaTick) { ep, tick -> ep to tick }
+        .distinctUntilChanged { a, b -> a.first?.id == b.first?.id && a.second == b.second }
+        // See MetadataRepository.FOCUS_DEBOUNCE_MS — episode lists are the fastest thing to scroll.
+        .debounce(tv.own.owntv.core.metadata.MetadataRepository.FOCUS_DEBOUNCE_MS)
+        .mapLatest { (ep, _) ->
+            val show = _openedSeries.value
+            if (ep == null || show == null) null
+            else EpisodeMeta(ep.id, runCatching { metadata.resolveEpisode(show, ep) }.getOrNull())
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    data class EpisodeMeta(val episodeId: Long, val cache: tv.own.owntv.core.database.entity.MetadataCacheEntity?)
+
+    /** Whether the episode area draws as text rows or a wall of stills. Global, see SettingsRepository. */
+    val episodeViewMode: StateFlow<SettingsRepository.VodViewMode> = settings.episodeViewMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsRepository.VodViewMode.LIST)
+
+    fun setEpisodeViewMode(mode: SettingsRepository.VodViewMode) {
+        viewModelScope.launch { settings.setEpisodeViewMode(mode) }
+    }
+
+    /**
+     * TMDB rows for EVERY episode of the active season, keyed by local episode id — the grid and the
+     * list both show every episode's still at once.
+     *
+     * Only fetched after [GRID_DWELL_MS]: opening a show and immediately
+     * pressing Back should cost nothing, and leaving cancels the fetch outright because `mapLatest`
+     * tears down the previous coroutine. One request covers the whole season (see
+     * `MetadataRepository.resolveSeasonEpisodes`).
+     */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val seasonEpisodeMeta: StateFlow<Map<Long, tv.own.owntv.core.database.entity.MetadataCacheEntity>> =
+        // Both layouts show each episode's still, date and plot, so both need the season's details.
+        combine(_openedSeries, _selectedSeason, episodes, _episodeMetaTick) { show, season, eps, _ ->
+            if (show == null) {
+                null
+            } else {
+                // Mirror the screen's own fallback: a show whose seasons start at 0 or 2 displays its
+                // first season, and fetching the requested-but-absent season would leave the grid blank.
+                val available = eps.map { it.seasonNumber }.distinct()
+                val active = if (available.contains(season)) season
+                else tv.own.owntv.core.content.EpisodeOrder.openingSeason(available) ?: season
+                show to eps.filter { it.seasonNumber == active }
+            }
+        }
+            .distinctUntilChanged { a, b ->
+                a?.first?.id == b?.first?.id && a?.second?.map { it.id } == b?.second?.map { it.id }
+            }
+            .flatMapLatest { pair ->
+                kotlinx.coroutines.flow.flow {
+                    if (pair == null || pair.second.isEmpty()) {
+                        emit(emptyMap())
+                        return@flow
+                    }
+                    // 1. Whatever is already cached, immediately. Coming back to a season you have
+                    //    already opened must not blank the tiles while a timer runs — that reads as
+                    //    the pictures reloading, which is what the dwell used to cause on EVERY switch.
+                    val cached = runCatching { metadata.cachedSeasonEpisodes(pair.first, pair.second) }
+                        .getOrDefault(emptyMap())
+                    emit(cached)
+                    // 2. Nothing more to do when the season is already complete — no timer, no request.
+                    if (cached.size >= pair.second.size) return@flow
+                    // 3. Only an INCOMPLETE season waits out the dwell before going to the network, so
+                    //    a show opened by accident still costs nothing.
+                    kotlinx.coroutines.delay(GRID_DWELL_MS)
+                    emit(
+                        runCatching { metadata.resolveSeasonEpisodes(pair.first, pair.second) }
+                            .getOrDefault(cached),
+                    )
+                }
+            }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    fun openSeries(s: SeriesEntity) {
+        _openedSeries.value = s
+        _selectedSeason.value = 1 // reset season when opening a different show
+        _lastPlayedEpisodeId.value = null
+        Log.d(TAG, "openSeries seriesId=${s.id} profile=${ctx.value.profileId}")
+        viewModelScope.launch {
+            _episodesLoading.value = true
+            _episodesFailure.value = null
+            _episodesFailure.value = (seriesRepository.loadEpisodes(s) as? EpisodeLoad.Failed)?.reason
+            // Jump to where you left off: seed the last-watched episode (and its season) from saved progress
+            // BEFORE clearing loading, so the screen's focus effect lands on it instead of episode 1.
+            val eps = seriesDao.episodesBySeries(s.id).first()
+            val lastEp = progressDao.lastWatchedEpisodeId(ctx.value.profileId, s.id)
+                ?.let { id -> eps.firstOrNull { it.id == id } }
+            if (lastEp != null) {
+                _selectedSeason.value = lastEp.seasonNumber
+                _lastPlayedEpisodeId.value = lastEp.id
+            }
+            _episodesLoading.value = false
+        }
+    }
+
+    fun openSeriesById(seriesId: Long) {
+        viewModelScope.launch {
+            val show = seriesDao.getSeriesById(seriesId) ?: return@launch
+            openSeries(show)
+        }
+    }
+
+    suspend fun playFromHomeAsync(seriesId: Long, episodeId: Long, startPositionMs: Long = 0): Boolean {
+        val episode = seriesDao.getEpisodeById(episodeId) ?: return false
+        val showId = if (seriesId > 0) seriesId else episode.seriesId
+        val show = seriesDao.getSeriesById(showId) ?: return false
+        if (episode.seriesId != show.id) return false
+        val pid = currentProfileId() ?: return false
+        if (!tv.own.owntv.core.content.AdultCategoryClassifier.allows(pid, show.categoryId, profileDao, categoryDao)) return false
+        seriesRepository.loadEpisodes(show)
+        val queue = seriesDao.episodesBySeries(show.id).first().sortedWith(tv.own.owntv.core.content.EpisodeOrder.episodes)
+        if (queue.isEmpty()) return false
+        playEpisodeQueue(show, queue, episode, startPositionMs)
+        return true
+    }
+
+    fun closeSeries() {
+        _openedSeries.value = null
+    }
+
+    /** The user's resume preference (Always / Ask / Never) — the screen drives the prompt. */
+    val resumeMode: StateFlow<SettingsRepository.ResumeMode> = settings.resumeMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsRepository.ResumeMode.ASK)
+
+    /** Saved resume position for [episode] (0 when none) — used by the screen to decide the prompt. */
+    suspend fun savedPositionMs(episode: EpisodeEntity): Long =
+        currentProfileId()?.let { progressDao.get(it, MediaType.EPISODE, episode.id)?.positionMs ?: 0 } ?: 0
+
+    /** Global "External player" toggle — screens must NOT open the fullscreen in-app player when on
+     *  (mounting it spins up an mpv instance even though playback branched to the external app). */
+    val externalPlayerOn: StateFlow<Boolean> = settings.externalPlayerSeries
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    /** Long-press "Play with external player" — always external, regardless of the global toggle. */
+    /** Stalker episodes resolve to a real URL at play time (create_link, series=<ep>); anything else
+     *  returns streamUrl as-is. Null = resolve failed — the caller should not start playback. */
+    private suspend fun resolvedEpisodeUrlOrNull(episode: EpisodeEntity): String? {
+        val show = seriesDao.getSeriesById(episode.seriesId)
+        val source = show?.let { sourceDao.getById(it.sourceId) }
+        if (!streamUrlResolver.needsResolve(source)) return episode.streamUrl
+        return try {
+            streamUrlResolver.resolve(source!!, episode.streamUrl, vod = true, episode = episode.episodeNumber)
+        } catch (e: Exception) {
+            Log.w(TAG, "stalker resolve failed episodeId=${episode.id}", e)
+            null
+        }
+    }
+
+    fun playEpisodeExternal(episode: EpisodeEntity) {
+        _lastPlayedEpisodeId.value = episode.id
+        viewModelScope.launch {
+            val pid = currentProfileId()
+            val show = seriesDao.getSeriesById(episode.seriesId) ?: return@launch
+            if (pid != null && !tv.own.owntv.core.content.AdultCategoryClassifier.allows(pid, show.categoryId, profileDao, categoryDao)) return@launch
+            Log.d(TAG, "playEpisodeExternal episodeId=${episode.id}")
+            val url = resolvedEpisodeUrlOrNull(episode) ?: return@launch
+            val source = sourceDao.getById(show.sourceId)
+            externalPlayerLauncher.launch(
+                url = url,
+                title = episode.name.takeIf { it.isNotBlank() },
+                subtitle = show.name,
+                userAgent = source?.userAgent,
+                httpHeaders = tv.own.owntv.core.settings.SourceOverrides.headersWithReferer(episode.httpHeaders, source),
+                startPositionMs = savedPositionMs(episode),
+            )
+            if (pid != null) {
+                runCatching {
+                    historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.EPISODE, itemId = episode.id))
+                }.onFailure { t -> Log.w(TAG, "external play episode history record failed episodeId=${episode.id} profile=$pid", t) }
+                runCatching {
+                    historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.SERIES, itemId = episode.seriesId))
+                }.onFailure { t -> Log.w(TAG, "external play series history record failed seriesId=${episode.seriesId} profile=$pid", t) }
+            }
+        }
+    }
+
+    fun playEpisode(episode: EpisodeEntity, startPositionMs: Long = 0) {
+        val show = _openedSeries.value ?: return
+        val seasonEpisodes = episodes.value
+            .filter { it.seasonNumber == episode.seasonNumber }
+            .sortedBy { it.episodeNumber }
+        playEpisodeQueue(show, seasonEpisodes, episode, startPositionMs)
+    }
+
+    fun playEpisodeQueue(show: SeriesEntity, queue: List<EpisodeEntity>, episode: EpisodeEntity, startPositionMs: Long = 0) {
+        _openedSeries.value = show
+        _playingSeries.value = show
+        _lastPlayedEpisodeId.value = episode.id
+        viewModelScope.launch {
+            val pid = currentProfileId()
+            if (pid != null && !tv.own.owntv.core.content.AdultCategoryClassifier.allows(pid, show.categoryId, profileDao, categoryDao)) return@launch
+            // External player (global toggle): launch only the selected episode (external players are
+            // single-item — no prev/next queue). History is still recorded; resume position and the
+            // in-app HUD/progress tick are not, since OwnTV can't observe the external app.
+            // A protected item cannot go to an external player: no standard intent extra
+            // carries a licence URL, so the other app would open it and fail on the first segment.
+            // Play it here instead, where the licence request can actually be made.
+            if (settings.externalPlayerSeries.first() && episode.drmConfig == null) {
+                Log.d(TAG, "playEpisodeQueue seriesId=${show.id} episodeId=${episode.id} -> external player")
+                val url = resolvedEpisodeUrlOrNull(episode) ?: return@launch
+                val source = sourceDao.getById(show.sourceId)
+                externalPlayerLauncher.launch(
+                    url = url,
+                    title = episode.name.takeIf { it.isNotBlank() },
+                    subtitle = show.name,
+                    userAgent = source?.userAgent,
+                    httpHeaders = tv.own.owntv.core.settings.SourceOverrides.headersWithReferer(episode.httpHeaders, source),
+                    startPositionMs = startPositionMs, // the screen's Resume / Start over answer
+                )
+                if (pid != null) {
+                    runCatching {
+                        historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.EPISODE, itemId = episode.id))
+                    }.onFailure { t -> Log.w(TAG, "external play episode history record failed episodeId=${episode.id} profile=$pid", t) }
+                    runCatching {
+                        historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.SERIES, itemId = episode.seriesId))
+                    }.onFailure { t -> Log.w(TAG, "external play series history record failed seriesId=${episode.seriesId} profile=$pid", t) }
+                }
+                return@launch
+            }
+            val startIndex = queue.indexOfFirst { it.id == episode.id }.coerceAtLeast(0)
+            Log.d(TAG, "playEpisodeQueue seriesId=${show.id} episodeId=${episode.id} profile=$pid queue=${queue.size} startIndex=$startIndex startPositionMs=$startPositionMs")
+            val source = sourceDao.getById(show.sourceId)
+            val sourceUa = source?.userAgent
+            // Stalker (D-2): every queue item resolves its playable URL right before IT loads — the
+            // stored streamUrl is the season cmd (shared by the whole season), and the per-episode
+            // create_link URL is short-lived, so next/prev/autoplay must each mint a fresh one.
+            val needsResolve = streamUrlResolver.needsResolve(source)
+            playingEpisodeRef = pid?.let {
+                PlayingEpisodeRef(
+                    episode, it, tv.own.owntv.core.player.enginePinKey(show.sourceId, "EPISODE", episode.remoteId),
+                )
+            }
+            player.playEpisodes(
+                items = queue.map { ep ->
+                    PlaylistItem(
+                        url = ep.streamUrl,
+                        meta = MediaMeta(
+                            title = ep.name.takeIf { it.isNotBlank() },
+                            subtitle = show.name,
+                            seasonNumber = ep.seasonNumber,
+                            episodeNumber = ep.episodeNumber,
+                            // Engine pins key on this, not on the URL: for Stalker the queue's
+                            // stored URL is the shared season cmd and the played URL is minted per item.
+                            contentKey = tv.own.owntv.core.player.enginePinKey(show.sourceId, "EPISODE", ep.remoteId),
+                            // v44 — audio/subtitle choices are remembered per series.
+                            trackKey = tv.own.owntv.core.player.enginePinKey(show.sourceId, "SERIES", show.remoteId),
+                        ),
+                        resolveUrl = if (needsResolve && source != null) {
+                            { streamUrlResolver.resolve(source, ep.streamUrl, vod = true, episode = ep.episodeNumber) }
+                        } else null,
+                        httpHeaders = tv.own.owntv.core.settings.SourceOverrides.headersWithReferer(ep.httpHeaders, source),
+                        drmConfig = ep.drmConfig,
+                        manifestType = ep.manifestType,
+                    )
+                },
+                startIndex = startIndex,
+                startPositionMs = startPositionMs,
+                userAgent = sourceUa,
+                vodEngineOverride = tv.own.owntv.core.settings.SourceOverrides.vodEngineOf(source),
+            )
+            // Enable the player's OpenSubtitles search for this episode. The parent
+            // series' TMDB id gives the strongest episode match when metadata is available.
+            if (pid != null) {
+                val parentTmdbId = runCatching { metadata.resolveSeries(show)?.tmdbId?.toLong() }.getOrNull()
+                subtitleController.setEpisode(pid, show, episode, parentTmdbId)
+                // Remember the queue so player-driven advances re-point the context.
+                playingQueue = PlayingQueue(show, queue, pid, parentTmdbId)
+            }
+            if (pid != null) {
+                runCatching {
+                    historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.EPISODE, itemId = episode.id))
+                }.onFailure { t ->
+                    Log.w(TAG, "playEpisodeQueue episode history record failed episodeId=${episode.id} profile=$pid", t)
+                }
+                runCatching {
+                    historyDao.record(WatchHistoryEntity(profileId = pid, mediaType = MediaType.SERIES, itemId = episode.seriesId))
+                }.onFailure { t ->
+                    Log.w(TAG, "playEpisodeQueue series history record failed seriesId=${episode.seriesId} profile=$pid", t)
+                }
+            }
+        }
+    }
+
+    /** Downloaded OpenSubtitles subtitles for an episode (long-press "Delete subtitles" popup).
+     *  Uses the currently open series as the parent show for the content key. */
+    suspend fun downloadedSubtitles(episode: EpisodeEntity): List<tv.own.owntv.core.database.dao.LinkedSubtitle> {
+        val show = _openedSeries.value ?: return emptyList()
+        return subtitleController.downloadsForEpisode(show, episode)
+    }
+
+    fun deleteSubtitle(cacheId: Long) {
+        viewModelScope.launch { subtitleController.deleteCached(cacheId) }
+    }
+
+    private suspend fun currentProfileId(): Long? {
+        val preferred = settings.activeProfileId.first()
+        return if (preferred >= 0) profileDao.resolveExistingProfileId(preferred) else null
+    }
+
+    /** Download states for the open show's episodes, keyed by episode id. */
+    val episodeDownloads: StateFlow<Map<Long, DownloadEntity>> = ctx
+        .flatMapLatest { c -> if (c.profileId < 0) flowOf(emptyList()) else downloadManager.observe(c.profileId) }
+        .map { list -> list.filter { it.mediaType == MediaType.EPISODE }.associateBy { it.itemId } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    fun downloadEpisode(episode: EpisodeEntity) {
+        val show = _openedSeries.value
+        val showDir = StorageAccess.sanitize(show?.name ?: "Series")
+        val ext = episode.containerExt ?: StorageAccess.extOf(episode.streamUrl)
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            val actualShow = show ?: seriesDao.getSeriesById(episode.seriesId)
+            if (!tv.own.owntv.core.content.AdultCategoryClassifier.allows(pid, actualShow?.categoryId, profileDao, categoryDao)) return@launch
+            downloadManager.enqueue(
+                profileId = pid,
+                mediaType = MediaType.EPISODE,
+                itemId = episode.id,
+                title = episode.name.takeIf { it.isNotBlank() } ?: show?.name.orEmpty(),
+                posterUrl = show?.posterUrl,
+                streamUrl = episode.streamUrl,
+                relativeDir = MediaFolders.seasonDir(showDir, episode.seasonNumber),
+                fileName = "${StorageAccess.sanitize(episode.name.ifBlank { "episode-${episode.episodeNumber}" })}.$ext",
+            )
+        }
+    }
+
+    fun downloadSeries(series: SeriesEntity) = downloadEpisodes(series, null)
+
+    /** "Download season" on the series page: only [season]'s episodes. */
+    fun downloadSeason(series: SeriesEntity, season: Int) = downloadEpisodes(series, season)
+
+    private fun downloadEpisodes(series: SeriesEntity, season: Int?) {
+        val showDir = StorageAccess.sanitize(series.name)
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            if (!tv.own.owntv.core.content.AdultCategoryClassifier.allows(pid, series.categoryId, profileDao, categoryDao)) return@launch
+            seriesDao.episodesBySeries(series.id).first().filter { season == null || it.seasonNumber == season }.forEach { ep ->
+                val ext = ep.containerExt ?: StorageAccess.extOf(ep.streamUrl)
+                downloadManager.enqueue(
+                    profileId = pid,
+                    mediaType = MediaType.EPISODE,
+                    itemId = ep.id,
+                    title = ep.name.takeIf { it.isNotBlank() } ?: series.name,
+                    posterUrl = series.posterUrl,
+                    streamUrl = ep.streamUrl,
+                    relativeDir = MediaFolders.seasonDir(showDir, ep.seasonNumber),
+                    fileName = "${StorageAccess.sanitize(ep.name.ifBlank { "episode-${ep.episodeNumber}" })}.$ext",
+                )
+            }
+        }
+    }
+
+    fun toggleFavorite(s: SeriesEntity) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            if (favoriteIds.value.contains(s.id)) userDataWriter.removeFavorite(pid, MediaType.SERIES, s.id)
+            else favoriteDao.add(FavoriteEntity(profileId = pid, mediaType = MediaType.SERIES, itemId = s.id))
+            refreshList() // the Favorites category uses a manual PagingSource — force a rebuild
+        }
+    }
+
+    /** Hide a category by its rail key (undo via Settings → Customize). */
+    fun hideCategory(key: LiveKey) {
+        viewModelScope.launch {
+            categoryEditor.hide(currentProfileId() ?: return@launch, MediaType.SERIES, key)
+        }
+    }
+
+    /** The content_order / movedFromOrigin context behind a rail key, or null for All / Favorites / History. */
+    private fun categoryContextKey(key: LiveKey): String? = when (key) {
+        is LiveKey.Folder -> folderContextKeys.value[key.id]
+        is LiveKey.Custom -> key.id
+        else -> null
+    }
+
+    /** What restoring [key]'s category to the playlist default would undo (empty when nothing). */
+    suspend fun categoryRestorePlan(key: LiveKey): CategoryRestorePlan {
+        val contextKey = categoryContextKey(key) ?: return CategoryRestorePlan()
+        val pid = currentProfileId() ?: return CategoryRestorePlan()
+        return planCategoryRestore(customize, contentOrderDao, pid, MediaType.SERIES, contextKey, customCategoryDao) {
+            when (key) {
+                is LiveKey.Folder -> seriesDao.snapshotByCategoryManual(key.id, pid, contextKey, Int.MAX_VALUE)
+                    .mapTo(HashSet()) { CustomizeKeys.series(it) }
+                else -> customCategoryDao.stableItemKeys(pid, contextKey).toSet()
+            }
+        }
+    }
+
+    /** Back to the playlist's order and contents (see [restoreCategoryToDefault]). */
+    fun restoreCategory(key: LiveKey) {
+        val contextKey = categoryContextKey(key) ?: return
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            restoreCategoryToDefault(customize, contentOrderDao, pid, MediaType.SERIES, contextKey, categoryRestorePlan(key))
+        }
+    }
+
+    fun enterCategoryMoveMode(key: LiveKey) {
+        if (key !is LiveKey.Folder && key !is LiveKey.Custom) return
+        viewModelScope.launch {
+            val c = ctx.first { it.profileId >= 0 }
+            _categoryMoveState.value = categoryEditor.beginMove(
+                profileId = c.profileId,
+                sourceIds = c.sourceIds,
+                type = MediaType.SERIES,
+                alphaRest = sortMode.value == SettingsRepository.SortMode.ALPHA,
+                key = key,
+            )
+        }
+    }
+
+    fun moveCategory(from: Int, to: Int) {
+        val s = _categoryMoveState.value ?: return
+        if (from !in s.rows.indices || to !in s.rows.indices || from == to) return
+        val rows = s.rows.toMutableList().apply { add(to, removeAt(from)) }
+        _categoryMoveState.value = s.copy(rows = rows, activeIndex = to, targetKey = rows[to].key)
+    }
+
+    fun commitCategoryMove() {
+        val s = _categoryMoveState.value ?: return
+        _categoryMoveState.value = null
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            customize.setCategoryOrder(pid, MediaType.SERIES, s.keys)
+        }
+    }
+
+    fun cancelCategoryMove() {
+        _categoryMoveState.value = null
+    }
+
+    fun enterMoveMode(series: SeriesEntity, key: LiveKey) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            val contextKey = when (key) {
+                is LiveKey.Folder -> folderContextKeys.value[key.id] ?: return@launch
+                is LiveKey.Custom -> key.id
+                LiveKey.Favorites -> ContentOrderEntity.FAV_CONTEXT
+                else -> return@launch
+            }
+            val items = when (key) {
+                is LiveKey.Folder -> seriesDao.snapshotByCategoryManual(key.id, pid, contextKey, 5000)
+                is LiveKey.Custom -> customCategoryDao.snapshotSeries(pid, key.id, ctx.value.sourceIds.ifEmpty { listOf(-1L) }, 5000)
+                LiveKey.Favorites -> seriesDao.snapshotFavoritesManual(pid, contextKey, ctx.value.sourceIds.ifEmpty { listOf(-1L) }, 5000)
+                LiveKey.History, LiveKey.All -> return@launch
+            }
+            val idx = items.indexOfFirst { it.id == series.id }
+            if (idx < 0) return@launch
+            _moveState.value = SeriesMoveState(items, idx, contextKey)
+            // Manual order is only visible in playlist order, so Move switches the list to it — but that
+            // is a means, not a choice the user made. Remember what they had so Cancel can put it back.
+            sortBeforeMove = sortMode.value
+            settings.setSortSeries(SettingsRepository.SortMode.PLAYLIST)
+        }
+    }
+
+    /** The sort the user was on before [enterMoveMode] switched the list to playlist order. */
+    private var sortBeforeMove: SettingsRepository.SortMode? = null
+
+    /** Takes the item being moved out and puts it back at [target]; the rest close up around it. */
+    /** Takes the item at [from] out and puts it back at [to]; the rest close up around it. */
+    fun move(from: Int, to: Int) {
+        val s = _moveState.value ?: return
+        if (from !in s.items.indices || to !in s.items.indices || from == to) return
+        val list = s.items.toMutableList().apply { add(to, removeAt(from)) }
+        _moveState.value = s.copy(items = list, activeIndex = to)
+    }
+
+    fun commitMove() {
+        val s = _moveState.value ?: return
+        _moveState.value = null
+        sortBeforeMove = null // the new order IS playlist order — staying on it is the point
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            contentOrderDao.replaceContext(
+                profileId = pid,
+                type = MediaType.SERIES,
+                contextKey = s.contextKey,
+                rows = s.items.mapIndexed { i, ser ->
+                    ContentOrderEntity(profileId = pid, mediaType = MediaType.SERIES, contextKey = s.contextKey, itemId = ser.id, position = i)
+                },
+            )
+        }
+    }
+
+    fun cancelMove() {
+        _moveState.value = null
+        // Cancel means nothing changed — including the sort Move switched away from.
+        val previous = sortBeforeMove ?: return
+        sortBeforeMove = null
+        if (previous != SettingsRepository.SortMode.PLAYLIST) {
+            viewModelScope.launch { settings.setSortSeries(previous) }
+        }
+    }
+
+    /** Hide the series from all lists (undo via Settings → Customize → Hidden items). */
+    fun hideSeries(series: SeriesEntity) {
+        if (_selectedSeries.value?.id == series.id) _selectedSeries.value = null
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            customize.setItemHidden(pid, MediaType.SERIES, CustomizeKeys.series(series), series.name, true)
+        }
+    }
+
+    fun removeFromHistory(seriesId: Long) {
+        viewModelScope.launch {
+            val pid = currentProfileId() ?: return@launch
+            // A show is watched one episode at a time, so its trace lives in the EPISODE rows too:
+            // the resume positions Home's Continue watching row is built from, and the episode
+            // history the Continue chip reads. Without those the removed show came straight back —
+            // which is why removeSeriesHistory clears all three together.
+            userDataWriter.removeSeriesHistory(pid, seriesId)
+            refreshList() // the History category uses a manual PagingSource — force a rebuild
+        }
+    }
+
+    private fun pagingSource(key: LiveKey, c: Ctx, query: String, sort: SettingsRepository.SortMode): PagingSource<Int, SeriesEntity> {
+        val ids = c.sourceIds.ifEmpty { listOf(-1L) }
+        val playlist = sort == SettingsRepository.SortMode.PLAYLIST
+        val rating = sort == SettingsRepository.SortMode.RATING
+        val dateAdded = sort == SettingsRepository.SortMode.DATE_ADDED
+        return if (query.isBlank()) when (key) {
+            // Catch-up is a Live TV-only rail (channels have archives, series don't), but the rail model
+            // is shared across all three sections — so it degrades to All here rather than existing.
+            LiveKey.All, LiveKey.Catchup -> when {
+                rating -> seriesDao.pagingAllRating(ids)
+                playlist -> seriesDao.pagingAllOriginal(ids)
+                dateAdded -> seriesDao.pagingAllDateAdded(ids)
+                else -> seriesDao.pagingAll(ids)
+            }
+            LiveKey.Favorites -> seriesDao.pagingFavoritesManual(c.profileId, ContentOrderEntity.FAV_CONTEXT, ids)
+            LiveKey.History -> seriesDao.pagingHistory(c.profileId, ids)
+            is LiveKey.Custom -> customCategoryDao.pagingSeries(c.profileId, key.id, ids)
+            is LiveKey.Folder -> {
+                val ctxKey = folderContextKeys.value[key.id] ?: ""
+                when {
+                    rating -> seriesDao.pagingByCategoryRating(key.id)
+                    dateAdded -> seriesDao.pagingByCategoryDateAdded(key.id)
+                    // Fast path: no manual order in this folder → the plain indexed query has
+                    // the identical (sortOrder, name) order without the join-sort.
+                    ctxKey !in orderedContexts.value -> seriesDao.pagingByCategory(key.id)
+                    else -> seriesDao.pagingByCategoryManual(key.id, c.profileId, ctxKey)
+                }
+            }
+        } else when (key) {
+            LiveKey.All, LiveKey.Catchup ->
+                if (dateAdded) seriesDao.searchAllDateAdded(query, ids)
+                else seriesDao.searchAll(query, ids)
+            LiveKey.Favorites -> seriesDao.searchFavorites(query, c.profileId, ids)
+            LiveKey.History -> seriesDao.searchHistory(query, c.profileId, ids)
+            is LiveKey.Custom -> customCategoryDao.searchSeries(query, c.profileId, key.id, ids)
+            is LiveKey.Folder ->
+                if (dateAdded) seriesDao.searchInCategoryDateAdded(query, key.id)
+                else seriesDao.searchInCategory(query, key.id)
+        }
+    }
+
+    private fun countFlow(key: LiveKey, c: Ctx, hiddenCats: Set<Long>): Flow<Int> {
+        val ids = c.sourceIds.ifEmpty { listOf(-1L) }
+        return when (key) {
+            LiveKey.All, LiveKey.Catchup ->
+                if (hiddenCats.isEmpty()) seriesDao.countAll(ids)
+                else seriesDao.countAllExcluding(ids, hiddenCats.toList())
+            LiveKey.Favorites -> seriesDao.countFavorites(c.profileId, ids)
+            LiveKey.History -> seriesDao.countHistory(c.profileId, ids)
+            is LiveKey.Custom -> customCategoryDao.countMembers(c.profileId, MediaType.SERIES, key.id, ids)
+            is LiveKey.Folder -> seriesDao.countByCategory(key.id)
+        }
+    }
+
+    // Remember the last selected category (Settings → Browsing & lists → "Remember last category —
+    // Series", on by default). Declared LAST in the class so railItems is already assigned when this
+    // init runs. Mirrors LiveViewModel's identical block.
+    init {
+        // Persist on change, debounced — the rail fires select() on focus as you scroll it.
+        viewModelScope.launch {
+            _selected.drop(1).debounce(800).distinctUntilChanged()
+                .collect { if (lockedKey == null) settings.setLastSeriesCategory(it.serialize()) }
+        }
+        // Restore once at startup, and only while still on the default (never yank a user who already
+        // navigated). A saved folder is honoured only once it exists in this profile's rail.
+        viewModelScope.launch {
+            if (!settings.rememberCategorySeries.first()) return@launch
+            val saved = parseLiveKey(settings.lastSeriesCategory.first()) ?: return@launch
+            // A saved Folder/Custom is honoured only while it still exists in this profile's rail —
+            // a deleted custom category or a re-synced-away folder must not resurrect on restart.
+            if (saved is LiveKey.Folder || saved is LiveKey.Custom) {
+                val ok = kotlinx.coroutines.withTimeoutOrNull(5_000) {
+                    railItems.first { list -> list.any { it.key == saved } }
+                } != null
+                if (ok && _selected.value == LiveKey.All) _selected.value = saved
+            } else if (_selected.value == LiveKey.All) {
+                _selected.value = saved
+            }
+        }
+    }
+
+    private companion object {
+        const val TAG = "OwnTVHome"
+
+        /**
+         * How long the user must stay on a season before the grid fetches its stills. Longer than the
+         * 700 ms focus debounce because this fires on *entering* a show rather than on scrolling, and a
+         * show opened by accident is backed out of well inside a second. Deliberately not longer: at a
+         * few seconds the grid sits empty long enough to look broken, and the user backs out and
+         * re-enters — which costs more requests than it saves.
+         */
+        const val GRID_DWELL_MS = 1_000L
+        val defaultRail = listOf(
+            LiveRailItem(LiveKey.Favorites, icon = OwnTVIcon.FAVORITE),
+            LiveRailItem(LiveKey.History, icon = OwnTVIcon.HISTORY),
+            LiveRailItem(LiveKey.All),
+        )
+    }
+}

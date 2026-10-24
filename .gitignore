@@ -1,0 +1,63 @@
+*.iml
+.gradle/
+.gradle-cache/
+.idea/
+.kotlin/
+local.properties
+.DS_Store
+**/build/
+/captures
+.externalNativeBuild
+.cxx
+
+# Local tooling / agent state
+.codex-*
+.claude/
+.planning/
+.serena/
+.codegraph/
+.zcode/
+CLAUDE.md
+AGENT_HANDOVER.md
+
+# Signing keys & secrets — NEVER commit these
+*.keystore
+*.jks
+keystore.properties
+signing.properties
+
+# Internal planning documents — kept local, never committed. `future_work/` is the core repo's name
+# for the same thing; it is listed here too so the same folder name is safe to use anywhere in the
+# suite and can never become a committed leak.
+future-plan/
+audit/
+future_work/
+
+# The PRODUCTION Cloudflare Workers — kept local, never committed.
+#
+# These are the deployments OwnTV's built-in defaults point at, so they carry abuse protection
+# (per-client access checks, request budgets, rate limits) that must not be public: publishing it
+# would only tell an abuser exactly how to get around it. Root-scoped so `extras/worker/` — the
+# public, unprotected self-host copy users are told to deploy — is NOT caught by this.
+/worker/
+
+# i18n seed tool run state (batch inputs, IDs, raw results) — never committed
+/runs/
+
+# Logcat captures and diagnostic dumps written into the repo root while debugging
+# (`adb logcat … | Tee-Object -FilePath .\something.txt`). These routinely contain portal URLs,
+# MAC addresses, stream URLs and tokens, so they must never reach a commit. Root-scoped on
+# purpose: the baseline profiles under app/src/main/generated/ are .txt and ARE committed.
+/*.txt
+/*.log
+
+# JVM crash dumps from a Gradle daemon (never worth committing)
+hs_err_pid*.log
+replay_pid*.log
+
+# Local-only archive (old detailed changelogs etc.), never committed
+/archive/
+
+# 8K PRO: secretos y datos locales, nunca en el repo
+tmdb_key.txt
+server_url.txt

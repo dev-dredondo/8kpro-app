@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="content_search_channels">Search channels…</string>
+    <string name="content_search_movies">Search movies…</string>
+    <string name="content_search_series">Search series…</string>
+
+    <!-- Brand. Overrides core's app_name (an app resource wins over a library one). -->
+    <string name="app_name" translatable="false">8K PRO</string>
+
+    <!-- Login (Xtream Codes account on the built-in server) -->
+    <string name="login_title">Sign in</string>
+    <string name="login_subtitle">Enter the username and password of your subscription.</string>
+    <string name="login_username">Username</string>
+    <string name="login_username_hint">Your username</string>
+    <string name="login_password">Password</string>
+    <string name="login_password_hint">Your password</string>
+    <string name="login_button">Login</string>
+    <string name="login_checking">Checking your account…</string>
+    <string name="login_error_empty">Enter your username and password.</string>
+    <string name="login_error_credentials">Wrong username or password.</string>
+    <string name="login_error_expired">Your subscription has expired.</string>
+    <string name="login_error_status">Your account is not active (%1$s).</string>
+    <string name="login_error_network">Could not reach the server. Check your internet connection and try again.</string>
+    <string name="login_field_help">Press OK to type, then OK again to go back to the list.</string>
+    <string name="login_logout">Sign out</string>
+    <string name="login_logout_message">You will need to sign in again to keep watching.</string>
+    <string name="login_account">Account: %1$s</string>
+</resources>

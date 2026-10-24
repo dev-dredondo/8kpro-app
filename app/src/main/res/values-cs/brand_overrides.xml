@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">Uživatel 8K PRO</string>
+    <string name="content_exit_owntv">Ukončit 8K PRO?</string>
+    <string name="content_storage_folder_fallback">Složka pro stahování teď není dostupná, takže se stahování ukládá do vlastní složky 8K PRO, dokud nebude zpět.</string>
+    <string name="content_epg_own_player">Přehrávač 8K PRO</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> je připravena (máte v<xliff:g id="current">%2$s</xliff:g>).</string>
+    <string name="recovery_title">8K PRO nemohla otevřít svou databázi</string>
+    <string name="settings_recording_timers_inexact">Toto zařízení nedovoluje aplikaci 8K PRO nastavovat přesné budíky, takže nahrávání může začít o pár minut později. Nahrávky proto začínají dříve.</string>
+    <string name="recording_failed_drm">Tento kanál je chráněný technologií DRM, takže jej lze sledovat, ale ne nahrávat. Ochranu uplatňuje váš poskytovatel, nikoli 8K PRO.</string>
+    <string name="sports_alerts_when_closed">Upozornění při zavřeném 8K PRO</string>
+    <string name="sports_alerts_footnote">Při zavřeném 8K PRO dorazí upozornění obvykle do minuty. Pokud telefon dlouho leží se zhasnutou obrazovkou, Android je může zdržet až asi o 15 minut. Karta s živým výsledkem se nezdržuje.</string>
+    <string name="sports_no_playlist_body">Výsledky, tabulky a upozornění fungují i bez něj. S playlistem 8K PRO najde každý kanál, který zápas vysílá.</string>
+    <string name="sports_sport_buttons_description">Moje sporty: jen to, co jste vybrali. Všechny sporty: každá soutěž, kterou 8K PRO zná, načítání trvá déle.</string>
+    <string name="player_trailer_blocked_title">Tento trailer nelze v 8K PRO přehrát</string>
+    <string name="settings_proxy_description">Odesílat veškerý provoz 8K PRO i přehrávání přes HTTP proxy.</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · bez nastavování</string>
+    <string name="settings_metadata_clear_advanced_message">Váš klíč API TMDB a adresa vlastního serveru budou z tohoto zařízení smazány a 8K PRO se vrátí k vestavěné sdílené službě s jejím denním podílem.</string>
+    <string name="settings_metadata_fair_share">Vestavěnou službu metadat sdílejí všichni uživatelé 8K PRO, takže každé zařízení dostává každý den vlastní podíl. Pokud svůj podíl vyčerpáte, plakáty a popisy se pozastaví, dokud se podíl neobnoví — informace z vaší vlastní playlistu fungují dál normálně. Přidání vlastního klíče API TMDB nebo serveru toto omezení odstraní: je zdarma a osobní klíč prakticky žádný limit nemá.</string>
+    <string name="settings_ffmpeg_audio_description">Zapnuto: ExoPlayer umí dekódovat i zvuk, pro který zařízení nemá dekodér, například DTS, TrueHD nebo MP2. Vlastní dekodéry zařízení mají stále přednost. Vypnuto: ExoPlayer používá jen dekodéry zařízení. mpv vždy dekóduje pomocí FFmpeg. Změna restartuje 8K PRO.</string>
+    <string name="settings_ffmpeg_audio_restart_message">Zvukový dekodér se změní po restartu 8K PRO.</string>
+    <string name="settings_app_startup_description">Co 8K PRO otevře při spuštění</string>
+    <string name="settings_open_subtitles_access_priority">Pro společný Worker 8K PRO nechte obojí prázdné. Vlastní adresa Workeru má přednost před přímým klíčem API. Přihlášení k účtu zůstává specifické pro profil.</string>
+    <string name="settings_restore_remote_description">Na libovolném zařízení s prohlížečem ve stejné Wi-Fi — telefonu, počítači nebo jiné televizi — naskenujte QR (nebo otevřete adresu), zadejte tento PIN, vyberte soubor zálohy 8K PRO a odešlete ho. Co obnovit, pak zvolíte zde.</string>
+    <string name="settings_catchup_player_internal">Přehrávač 8K PRO</string>
+    <string name="settings_sources_probe_warning">Mnozí poskytovatelé nikdy neuvedou, kolik kanálů můžete sledovat najednou, a tak to 8K PRO zjistí tím, že jich několik otevře a sleduje, které vydrží. Vše, co právě běží, se zastaví a může to trvat až dvě minuty.</string>
+    <string name="settings_sources_probe_unknown">8K PRO nedokázal zjistit, kolik kanálů tento poskytovatel dovolí.</string>
+    <string name="settings_dns_toggle_description">Všechna vyhledávání domén 8K PRO provádět prostřednictvím vlastního serveru DNS.</string>
+    <string name="settings_live_tune_timeout_description">Pokud se u živého kanálu do této doby neobjeví obraz, 8K PRO to vzdá a dá vám vědět, místo aby nechal černou obrazovku, zatímco zkouší všechny své přehrávače. Volba „Nikdy“ zkouší dál, což u kanálu, který váš poskytovatel zrušil, může trvat výrazně přes minutu. Čekání, o které si řekne poskytovatel, se nezapočítává.</string>
+    <string name="settings_surround_forced_description">Prostorový zvuk – posílejte Dolby/DTS do skutečného přijímače 5.1/7.1. Pokud ztichne nebo se zadrhává, 8K PRO se i tak vrátí ke stereu a dá vám vědět.</string>
+    <string name="settings_language_help_translate">Pomozte přeložit 8K PRO do vašeho jazyka</string>
+    <string name="settings_language_contribution_description">Naskenujte QR kód nebo otevřete odkaz, zvolte libovolný dostupný jazyk a přispějte ve všech šesti překladových komponentách 8K PRO.</string>
+    <string name="settings_language_contribution_qr_description">QR kód pro přehled překladatelského projektu 8K PRO</string>
+    <string name="settings_auto_frame_rate_warning_description">Toto zařízení běží na Androidu <xliff:g id="android_version">%1$s</xliff:g>. Na Androidu nižším než 12 televizor nedokáže 8K PRO sdělit, které obnovovací frekvence umí plynule přepínat, takže změna frekvence může na vteřinu nebo dvě zhasnout obrazovku – někdy i vícekrát během jednoho pořadu.\n\nDoporučujeme zde nechat automatickou snímkovou frekvenci vypnutou. Pokud váš televizor přepíná bez problémů, zapněte ji a uvidíte: můžete to kdykoli změnit zpět.</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">Toto zařízení běží na Androidu <xliff:g id="android_version">%1$s</xliff:g>. Na Androidu nižším než 12 zařízení nedokáže 8K PRO sdělit, které obnovovací frekvence umí plynule přepínat, takže změna frekvence může na vteřinu nebo dvě zhasnout obrazovku – někdy i vícekrát během jednoho pořadu.\n\nDoporučujeme zde nechat automatickou snímkovou frekvenci vypnutou. Pokud vaše obrazovka přepíná bez problémů, zapněte ji a uvidíte: můžete to kdykoli změnit zpět.</string>
+    <string name="local_sync_error_unreachable">Toto zařízení se nepodařilo kontaktovat. Otevřete na něm 8K PRO → Více → Místní synchronizace a zapněte Režim synchronizace. Obě zařízení musí být na stejné Wi-Fi.</string>
+    <string name="settings_app_icon_summary">Barva ikony a loga 8K PRO</string>
+    <string name="settings_app_icon_sheet_mobile">Jak se 8K PRO zobrazí na vaší domovské obrazovce. Aplikace se jednou restartuje.</string>
+    <string name="app_icon_restart_title">Restartovat 8K PRO?</string>
+    <string name="app_icon_restart_message">Vybrali jste novou ikonu a logo. Projeví se po restartu 8K PRO.</string>
+    <string name="settings_help_theme">8K PRO je navržen pro tmavý motiv. Systém se řídí nastavením televize, pokud ho má; světlý se hodí do světlé místnosti.</string>
+    <string name="settings_help_fonts">Písmo používané v celém 8K PRO a velikost textu. Vyskakovací okna používají stejné písmo.</string>
+    <string name="settings_help_app_icon">Ikona 8K PRO na domovské obrazovce televize. Spouštěči může chvíli trvat, než změnu zobrazí.</string>
+    <string name="settings_help_brand_accent">Logo 8K PRO v nabídce, v sekci O aplikaci a v nastavení ukazuje trojúhelník přehrávání ve vaší barvě zvýraznění. Ikona na domovské obrazovce si ponechá své barvy.</string>
+    <string name="settings_help_startup">Co 8K PRO zobrazí po spuštění: Domů, naposledy sledovaný kanál, oblíbené, nebo kanál, který vyberete.</string>
+    <string name="settings_help_check_updates">Hned vyhledá na GitHubu novější 8K PRO a nabídne instalaci. Playlisty, oblíbené a nastavení zůstanou, jak jsou.</string>
+    <string name="settings_help_update_startup">Při každém spuštění 8K PRO hledá novou verzi a dá vědět, když nějaká je. Bez zeptání se nic nenainstaluje.</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">Jazyk všech nabídek a zpráv v 8K PRO. <xliff:g id="count">%1$d</xliff:g> jazyk; dokud nějaký nevyberete, řídí se jazykem televize.</item>
+        <item quantity="few">Jazyk všech nabídek a zpráv v 8K PRO. <xliff:g id="count">%1$d</xliff:g> jazyky; dokud nějaký nevyberete, řídí se jazykem televize.</item>
+        <item quantity="many">Jazyk všech nabídek a zpráv v 8K PRO. <xliff:g id="count">%1$d</xliff:g> jazyků; dokud nějaký nevyberete, řídí se jazykem televize.</item>
+        <item quantity="other">Jazyk všech nabídek a zpráv v 8K PRO. <xliff:g id="count">%1$d</xliff:g> jazyků; dokud nějaký nevyberete, řídí se jazykem televize.</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO používá jazyk televize (nyní <xliff:g id="language">%1$s</xliff:g>). Vyberte níže jazyk, který chcete používat jen v 8K PRO.</string>
+    <string name="settings_language_pick_help">Používat <xliff:g id="language">%1$s</xliff:g> v 8K PRO bez ohledu na jazyk televize.</string>
+    <string name="settings_help_bg_background">Stage ukazuje vlastní jemné barvy 8K PRO. Obrázek ukazuje váš obrázek za každou obrazovkou. Prosté je plochá tmavá výplň.</string>
+    <string name="setup_disclaimer">8K PRO je pouze přehrávač médií. Neobsahuje žádné kanály, playlisty ani obsah. Za přidání vlastních legálně dostupných zdrojů Xtream, M3U nebo Stalker odpovídáte vy.</string>
+    <string name="setup_set_up_owntv">Nastavení 8K PRO</string>
+    <string name="setup_sync_device_description">Zkopírujte vše z druhého zařízení 8K PRO přes Wi-Fi</string>
+    <string name="setup_byo_source_description">8K PRO je přehrávač — přidejte vlastní zdroj Xtream, M3U nebo Stalker.</string>
+    <string name="companion_pin_page_title">8K PRO — Zadat PIN</string>
+    <string name="companion_add_page_title">8K PRO — Přidat zdroj</string>
+    <string name="companion_saved_page_title">8K PRO — Odesláno</string>
+    <string name="companion_backup_page_title">8K PRO — Obnovení ze zálohy</string>
+    <string name="companion_backup_description">Vyberte soubor zálohy 8K PRO (.own nebo starší .json) a stiskněte Odeslat. Přenese se do televizoru — vezměte dálkový ovladač a vyberte tam, co chcete obnovit.</string>
+    <string name="companion_image_page_title">8K PRO — Obrázek na pozadí</string>
+    <string name="companion_download_page_title">8K PRO — Stáhnout zálohu</string>
+    <string name="companion_download_description">Televizor připravil soubor zálohy 8K PRO. Klepnutím na tlačítko jej uložte do tohoto zařízení (owntv-backup.own). Uchovávejte jej na bezpečném místě — později z něj můžete provést obnovení.</string>
+    <string name="local_sync_browser_title">Místní synchronizace 8K PRO</string>
+    <string name="local_sync_browser_body">Tato adresa je určená pro aplikaci 8K PRO na druhém zařízení. Otevřete tam Místní synchronizaci a vyberte ze seznamu toto zařízení.</string>
+    <string name="setup_welcome_title">Vítejte v 8K PRO</string>
+    <string name="setup_line_app_icon">Jak se 8K PRO zobrazí na domovské obrazovce televize</string>
+    <string name="setup_line_app_icon_mobile">Jak se 8K PRO zobrazí na vaší domovské obrazovce</string>
+</resources>

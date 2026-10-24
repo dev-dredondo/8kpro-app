@@ -1,0 +1,116 @@
+name: i18n
+
+# Lightweight, deliberately SEPARATE from android.yml (which the repo restricts to main / v* tags).
+# Three jobs, all gating:
+#   baseline  — the hardcoded-literal ratchet against the pull-request merge base (not HEAD^, which
+#               is bypassable in a multi-commit PR).
+#   validate  — the Kotlin-side checks: locale-stable number formatting and bounded text overflow.
+#               The strings themselves live in the core repository now, so locales.json schema,
+#               placeholder/plural parity, translation coverage and the toolkit's own regression
+#               tests run there — see ahXN00/OwnTV_Core's i18n workflow.
+#   pseudo    — inspects the BUILT debug and release APKs and proves pseudolocales survived
+#               localeFilters in debug and are absent in release. The flag being set is not proof.
+#
+# Why merge base and not HEAD^: a baseline can grow in commit 2 and stay untouched in the final
+# commit, so the final commit's diff against its parent passes while the PR as a whole regressed.
+# The required invariant is: PR-head baseline ⊆ pull-request merge-base baseline.
+#
+# Why main is also a trigger: work lands on main by direct push, not only by PR. A pull_request-only
+# workflow never inspects those commits, so unclassified literals accumulate on main unseen and the
+# next contributor's PR fails for debt that is not theirs. On push the ratchet has no merge base to
+# compare against, so it runs in bootstrap mode: main must be self-consistent (nothing unclassified,
+# nothing stale), which is the invariant a PR then inherits. pseudo stays off the push path — it
+# assembles both APKs, which android.yml already does for main.
+#
+# All three step aside for a "Pin core x.y.z" branch: that pull request changes the pin and
+# locales.json and no Kotlin at all, so every check here would re-examine code identical to main.
+# android.yml's verify-pin job covers those pull requests instead.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  baseline:
+    if: ${{ !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'bump/core-')) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Fetch base branch
+        if: ${{ github.event_name == 'pull_request' }}
+        run: git fetch --no-tags --depth=1 origin "${GITHUB_BASE_REF}"
+
+      - name: Hardcoded-literal ratchet
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE_SHA="$(git merge-base HEAD "origin/${GITHUB_BASE_REF}")"
+            python3 tools/i18n/check_hardcoded_strings.py verify-ci --base-sha "$BASE_SHA"
+          else
+            python3 tools/i18n/check_hardcoded_strings.py verify --bootstrap
+          fi
+
+  validate:
+    if: ${{ !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'bump/core-')) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Locale-stable Kotlin number formatting
+        run: python3 tools/i18n/check_number_locale.py
+      - name: Bounded Compose text overflow
+        run: python3 tools/i18n/check_text_overflow.py
+
+  pseudo:
+    # Builds the debug + release standard APKs and inspects their resource tables. Heavier than the
+    # other two jobs, so it is its own job rather than piggy-backed on android.yml — and skipped on
+    # push, where android.yml already assembles main.
+    if: ${{ github.event_name != 'push' && !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'bump/core-')) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          # 'tools' is obsolete and Google removed it from the SDK repository; the
+          # action still asks for it by default, which fails the whole setup step.
+          packages: 'platform-tools'
+      - name: Assemble standard debug + release APKs
+        run: ./gradlew :app:assembleStandardDebug :app:assembleStandardRelease --console=plain
+      - name: Verify pseudolocale packaging
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+        run: |
+          DBG=$(ls app/build/outputs/apk/standard/debug/*.apk | head -1)
+          REL=$(ls app/build/outputs/apk/standard/release/*.apk | head -1)
+          python3 tools/i18n/check_pseudo_locales.py --apk "$DBG" --mode debug
+          python3 tools/i18n/check_pseudo_locales.py --apk "$REL" --mode release

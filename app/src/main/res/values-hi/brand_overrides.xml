@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERADO por tools/brand/gen_brand_overrides.py — no editar a mano. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="MissingTranslation,ExtraTranslation,UnusedResources">
+    <string name="common_own_tv_user">8K PRO उपयोगकर्ता</string>
+    <string name="content_exit_owntv">8K PRO से बाहर निकलें?</string>
+    <string name="content_storage_folder_fallback">आपका डाउनलोड फ़ोल्डर अभी उपलब्ध नहीं है, इसलिए उसके वापस आने तक डाउनलोड 8K PRO के अपने फ़ोल्डर में सहेजे जा रहे हैं।</string>
+    <string name="content_epg_own_player">8K PRO प्लेयर</string>
+    <string name="update_ready">8K PRO v<xliff:g id="available">%1$s</xliff:g> तैयार है (आपके पास v<xliff:g id="current">%2$s</xliff:g> है)।</string>
+    <string name="recovery_title">8K PRO अपना डेटाबेस नहीं खोल सका</string>
+    <string name="settings_recording_timers_inexact">यह डिवाइस 8K PRO को सटीक अलार्म सेट करने नहीं देता, इसलिए रिकॉर्डिंग कुछ मिनट देर से शुरू हो सकती है। इसकी भरपाई के लिए रिकॉर्डिंग जल्दी शुरू होती है।</string>
+    <string name="recording_failed_drm">यह चैनल DRM-सुरक्षित है, इसलिए इसे देखा जा सकता है लेकिन रिकॉर्ड नहीं किया जा सकता। यह सुरक्षा आपके प्रोवाइडर की ओर से है, 8K PRO की ओर से नहीं।</string>
+    <string name="sports_alerts_when_closed">8K PRO बंद होने पर अलर्ट</string>
+    <string name="sports_alerts_footnote">8K PRO बंद होने पर अलर्ट आमतौर पर एक मिनट में आ जाते हैं। अगर फ़ोन लंबे समय तक स्क्रीन बंद करके पड़ा रहा हो, तो Android इन्हें लगभग 15 मिनट तक रोक सकता है। लाइव स्कोर कार्ड नहीं रुकता।</string>
+    <string name="sports_no_playlist_body">स्कोर, तालिकाएँ और अलर्ट इसके बिना भी चलते हैं। प्लेलिस्ट होने पर 8K PRO इस मैच को दिखाने वाले सभी चैनल ढूँढ लेता है।</string>
+    <string name="sports_sport_buttons_description">मेरे खेल: सिर्फ़ जो आपने चुना। सभी खेल: 8K PRO को पता हर लीग, जिसे लोड होने में ज़्यादा समय लगता है।</string>
+    <string name="player_trailer_blocked_title">यह ट्रेलर 8K PRO में नहीं चल सकता</string>
+    <string name="settings_proxy_description">8K PRO का पूरा ट्रैफ़िक और प्लेबैक HTTP प्रॉक्सी के माध्यम से भेजें।</string>
+    <string name="settings_metadata_shared_worker_description">8K PRO Worker · कोई सेटअप नहीं</string>
+    <string name="settings_metadata_clear_advanced_message">आपकी TMDB API कुंजी और आपके सर्वर का पता इस डिवाइस से हटा दिया जाएगा, और 8K PRO अपने दैनिक हिस्से वाली अंतर्निहित साझा सेवा पर लौट आएगा।</string>
+    <string name="settings_metadata_fair_share">अंतर्निहित मेटाडेटा सेवा 8K PRO का उपयोग करने वाले सभी लोगों के बीच साझा है, इसलिए हर डिवाइस को हर दिन अपना हिस्सा मिलता है। हिस्सा खत्म होने पर पोस्टर और विवरण तब तक रुक जाते हैं जब तक वह फिर से न भर जाए — आपकी अपनी प्लेलिस्ट की जानकारी सामान्य रूप से काम करती रहती है। अपनी TMDB API कुंजी या सर्वर जोड़ने पर यह सीमा हट जाती है: यह मुफ़्त है, और निजी कुंजी पर व्यावहारिक रूप से कोई सीमा नहीं है।</string>
+    <string name="settings_ffmpeg_audio_description">चालू: ExoPlayer वह आवाज़ भी डिकोड कर सकता है जिसके लिए डिवाइस में डिकोडर नहीं है, जैसे DTS, TrueHD या MP2। डिवाइस के अपने डिकोडर अब भी पहले आते हैं। बंद: ExoPlayer सिर्फ़ डिवाइस के डिकोडर इस्तेमाल करता है। mpv हमेशा FFmpeg से डिकोड करता है। इसे बदलने पर 8K PRO रीस्टार्ट होता है।</string>
+    <string name="settings_ffmpeg_audio_restart_message">8K PRO रीस्टार्ट होने के बाद ऑडियो डिकोडर बदल जाएगा।</string>
+    <string name="settings_app_startup_description">शुरू होने पर 8K PRO क्या खोलेगा</string>
+    <string name="settings_open_subtitles_access_priority">8K PRO की साझा Worker सेवा उपयोग करने के लिए दोनों खाली छोड़ें। कस्टम Worker URL को सीधी API कुंजी पर प्राथमिकता मिलती है। खाता सत्र हर प्रोफ़ाइल के लिए अलग रहते हैं।</string>
+    <string name="settings_restore_remote_description">उसी वाई-फ़ाई पर ब्राउज़र वाले किसी भी डिवाइस — फ़ोन, कंप्यूटर या दूसरा टीवी — पर QR स्कैन करें (या URL खोलें), यह PIN डालें, अपनी 8K PRO बैकअप फ़ाइल चुनें और भेजें। फिर यहाँ चुनें कि क्या वापस लाना है।</string>
+    <string name="settings_catchup_player_internal">8K PRO प्लेयर</string>
+    <string name="settings_sources_probe_warning">कई प्रदाता कभी नहीं बताते कि आप एक साथ कितने चैनल देख सकते हैं, इसलिए 8K PRO कुछ चैनल खोलकर और यह देखकर पता लगाता है कि कौन से चलते रहते हैं। अभी जो कुछ चल रहा है वह रुक जाएगा, और इसमें दो मिनट तक लग सकते हैं।</string>
+    <string name="settings_sources_probe_unknown">8K PRO यह पता नहीं लगा सका कि यह प्रदाता कितने चैनलों की अनुमति देता है।</string>
+    <string name="settings_dns_toggle_description">8K PRO के सभी डोमेन लुकअप कस्टम DNS सर्वर के ज़रिए हल करें।</string>
+    <string name="settings_live_tune_timeout_description">अगर इस समय तक किसी लाइव चैनल पर तस्वीर नहीं आई, तो 8K PRO कोशिश करना बंद कर देगा और आपको बता देगा — अपने सारे प्लेयर एक-एक करके आज़माते हुए काली स्क्रीन छोड़ने के बजाय। “कभी नहीं” चुनने पर कोशिश चलती रहती है, और आपके प्रदाता द्वारा हटाए गए चैनल पर इसमें एक मिनट से भी ज़्यादा लग सकता है। प्रदाता खुद जो इंतज़ार माँगता है, वह इसमें नहीं गिना जाता।</string>
+    <string name="settings_surround_forced_description">सराउंड — Dolby/DTS को असली 5.1/7.1 रिसीवर पर भेजता है। अगर आवाज़ बंद हो जाए या अटक जाए, तो 8K PRO फिर भी स्टीरियो पर लौट आता है और आपको बता देता है।</string>
+    <string name="settings_language_help_translate">8K PRO को अपनी भाषा में अनुवाद करने में मदद करें</string>
+    <string name="settings_language_contribution_description">QR कोड स्कैन करें या लिंक खोलकर किसी भी उपलब्ध भाषा को चुनें और 8K PRO के सभी छह अनुवाद घटकों में योगदान दें।</string>
+    <string name="settings_language_contribution_qr_description">8K PRO अनुवाद परियोजना अवलोकन के लिए QR कोड</string>
+    <string name="settings_auto_frame_rate_warning_description">यह डिवाइस Android <xliff:g id="android_version">%1$s</xliff:g> पर चलता है। Android 12 से नीचे टीवी 8K PRO को यह नहीं बता सकता कि वह किन रिफ़्रेश रेटों पर सुचारू रूप से स्विच कर सकता है, इसलिए रेट बदलने पर स्क्रीन एक-दो सेकंड के लिए काली हो सकती है — कभी-कभी कार्यक्रम के दौरान एक से अधिक बार।\n\nहम यहाँ Auto frame rate बंद रखने की अनुशंसा करते हैं। अगर आपका टीवी बिना किसी समस्या के स्विच करता है, तो इसे चालू करके देखें: आप इसे कभी भी वापस बदल सकते हैं।</string>
+    <string name="settings_auto_frame_rate_warning_description_mobile">यह डिवाइस Android <xliff:g id="android_version">%1$s</xliff:g> पर चलता है। Android 12 से नीचे डिवाइस 8K PRO को यह नहीं बता सकता कि वह किन रिफ़्रेश रेटों पर सुचारू रूप से स्विच कर सकता है, इसलिए रेट बदलने पर स्क्रीन एक-दो सेकंड के लिए काली हो सकती है — कभी-कभी कार्यक्रम के दौरान एक से अधिक बार।\n\nहम यहाँ Auto frame rate बंद रखने की अनुशंसा करते हैं। अगर आपकी स्क्रीन बिना किसी समस्या के स्विच करती है, तो इसे चालू करके देखें: आप इसे कभी भी वापस बदल सकते हैं।</string>
+    <string name="local_sync_error_unreachable">इस डिवाइस तक नहीं पहुँचा जा सका। उस पर 8K PRO → अधिक → लोकल सिंक खोलें और सिंक मोड चालू करें। दोनों डिवाइस एक ही वाई-फ़ाई पर होने चाहिए।</string>
+    <string name="settings_app_icon_summary">8K PRO आइकन और लोगो का रंग</string>
+    <string name="settings_app_icon_sheet_mobile">आपकी होम स्क्रीन पर 8K PRO कैसा दिखता है। ऐप एक बार रीस्टार्ट होता है।</string>
+    <string name="app_icon_restart_title">8K PRO रीस्टार्ट करें?</string>
+    <string name="app_icon_restart_message">आपने नया आइकन और लोगो चुना है। 8K PRO रीस्टार्ट होने के बाद ये लागू होंगे।</string>
+    <string name="settings_help_theme">8K PRO डार्क थीम के लिए बना है। सिस्टम टीवी की अपनी सेटिंग मानता है, अगर हो; लाइट रोशन कमरे के लिए ठीक है।</string>
+    <string name="settings_help_fonts">पूरे 8K PRO में इस्तेमाल होने वाला फ़ॉन्ट और टेक्स्ट का आकार। पॉपअप भी यही फ़ॉन्ट इस्तेमाल करते हैं।</string>
+    <string name="settings_help_app_icon">टीवी की होम स्क्रीन पर 8K PRO का आइकन। बदलाव दिखाने में लॉन्चर को थोड़ा समय लग सकता है।</string>
+    <string name="settings_help_brand_accent">मेन्यू, About और सेटअप में 8K PRO लोगो का प्ले त्रिकोण आपके एक्सेंट रंग में दिखता है। होम स्क्रीन का आइकन अपने रंग रखता है।</string>
+    <string name="settings_help_startup">शुरू होने पर 8K PRO क्या दिखाए: होम, आखिरी देखा चैनल, आपके पसंदीदा, या आपका चुना चैनल।</string>
+    <string name="settings_help_check_updates">अभी GitHub पर नया 8K PRO खोजता है और इंस्टॉल करने का विकल्प देता है। आपकी प्लेलिस्ट, पसंदीदा और सेटिंग्स जैसी हैं वैसी रहती हैं।</string>
+    <string name="settings_help_update_startup">हर बार 8K PRO शुरू होने पर नया संस्करण खोजता है और मिलने पर बताता है। बिना पूछे कुछ इंस्टॉल नहीं होता।</string>
+    <plurals name="settings_help_language">
+        <item quantity="one">8K PRO के हर मेनू और संदेश की भाषा। <xliff:g id="count">%1$d</xliff:g> भाषाएँ; जब तक आप न चुनें, टीवी की अपनी भाषा अपनाती है।</item>
+        <item quantity="other">8K PRO के हर मेनू और संदेश की भाषा। <xliff:g id="count">%1$d</xliff:g> भाषाएँ; जब तक आप न चुनें, टीवी की अपनी भाषा अपनाती है।</item>
+    </plurals>
+    <string name="settings_language_system_help">8K PRO टीवी की भाषा का पालन करता है (अभी <xliff:g id="language">%1$s</xliff:g>)। सिर्फ़ 8K PRO में इस्तेमाल करने के लिए नीचे कोई भाषा चुनें।</string>
+    <string name="settings_language_pick_help">टीवी की भाषा जो भी हो, 8K PRO में <xliff:g id="language">%1$s</xliff:g> इस्तेमाल करें।</string>
+    <string name="settings_help_bg_background">Stage 8K PRO के अपने हल्के रंग दिखाता है। तस्वीर हर स्क्रीन के पीछे आपकी अपनी तस्वीर दिखाती है। सादा एक सपाट गहरा रंग है।</string>
+    <string name="setup_disclaimer">8K PRO केवल एक मीडिया प्लेयर है। इसमें कोई चैनल, प्लेलिस्ट या सामग्री शामिल नहीं है। अपने ऐसे Xtream, M3U या Stalker स्रोत जोड़ने की ज़िम्मेदारी आपकी है जिन तक आपकी कानूनी पहुँच है।</string>
+    <string name="setup_set_up_owntv">8K PRO सेट अप करें</string>
+    <string name="setup_sync_device_description">वाई-फ़ाई से अपने दूसरे 8K PRO डिवाइस से सब कुछ कॉपी करें</string>
+    <string name="setup_byo_source_description">8K PRO एक प्लेयर है — अपना Xtream, M3U या Stalker स्रोत जोड़ें।</string>
+    <string name="companion_pin_page_title">8K PRO — PIN दर्ज करें</string>
+    <string name="companion_add_page_title">8K PRO — स्रोत जोड़ें</string>
+    <string name="companion_saved_page_title">8K PRO — भेजा गया</string>
+    <string name="companion_backup_page_title">8K PRO — बैकअप रीस्टोर करें</string>
+    <string name="companion_backup_description">कोई 8K PRO बैकअप फ़ाइल (.own या पुरानी .json) चुनें और भेजें दबाएँ। उसे टीवी पर भेज दिया जाएगा — रिमोट कंट्रोल उठाएँ और वहाँ चुनें कि क्या रीस्टोर करना है।</string>
+    <string name="companion_image_page_title">8K PRO — पृष्ठभूमि चित्र</string>
+    <string name="companion_download_page_title">8K PRO — बैकअप डाउनलोड करें</string>
+    <string name="companion_download_description">आपके टीवी ने 8K PRO बैकअप फ़ाइल तैयार की है। इसे इस डिवाइस पर सहेजने के लिए बटन पर टैप करें (8K PRO-बैकअप.own)। इसे किसी सुरक्षित जगह पर रखें — आप बाद में इससे रीस्टोर कर सकते हैं।</string>
+    <string name="local_sync_browser_title">8K PRO लोकल सिंक</string>
+    <string name="local_sync_browser_body">यह पता आपके दूसरे डिवाइस के 8K PRO ऐप के लिए है। वहाँ लोकल सिंक खोलें और सूची में से यह डिवाइस चुनें।</string>
+    <string name="setup_welcome_title">8K PRO में आपका स्वागत है</string>
+    <string name="setup_line_app_icon">टीवी की होम स्क्रीन पर 8K PRO कैसा दिखता है</string>
+    <string name="setup_line_app_icon_mobile">आपकी होम स्क्रीन पर 8K PRO कैसा दिखता है</string>
+</resources>
