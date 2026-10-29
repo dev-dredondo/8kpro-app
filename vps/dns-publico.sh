@@ -12,6 +12,7 @@
 #
 #  Uso (como root):    bash dns-publico.sh
 #  Cambiar el límite:  LIMITE=40 RAFAGA=120 bash dns-publico.sh
+#  Sin límite:         LIMITE=0 bash dns-publico.sh   (no recomendado)
 #  Volver a cerrarlo:  bash dns-publico.sh --cerrar
 # =============================================================================
 set -euo pipefail
@@ -55,6 +56,14 @@ if ss -lnup | awk '{print $5, $NF}' | grep -E "^(${PUB//./\\.}|0\.0\.0\.0|\*):53
 fi
 
 # --- 1. Firewall con límite por IP -------------------------------------------
+if [[ "$LIMITE" == "0" ]]; then
+verde "1/3 SIN límite de consultas por IP"
+cat > "$FW" <<'EOF'
+#!/usr/bin/env bash
+# Puerto 53 abierto a todos, SIN límite por IP (LIMITE=0): solo se quita la tabla del límite.
+nft delete table inet dns_publico 2>/dev/null || true
+EOF
+else
 verde "1/3 Límite de ${LIMITE} consultas/s por IP (ráfagas de ${RAFAGA})"
 cat > "$FW" <<EOF
 #!/usr/bin/env bash
@@ -75,6 +84,7 @@ table inet dns_publico {
 }
 NFT
 EOF
+fi
 chmod 0755 "$FW"
 "$FW"
 
