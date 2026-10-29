@@ -61,7 +61,7 @@ fi
 verde "2/6 Disco OK (${LIBRE_MB} MB libres)"
 if [[ -d "$HOME/.rustup" ]] && [[ "${CONSERVAR_RUST:-0}" != "1" ]]; then
     aviso "Hay un Rust instalado en $HOME/.rustup (lo dejó una versión anterior de este script)."
-    aviso "Ya no hace falta. Para liberar ~600 MB:  rustup self uninstall -y"
+    aviso "Ya no hace falta. Para liberar ~600 MB:  $HOME/.cargo/bin/rustup self uninstall -y"
 fi
 
 # --- 4. Unbound en 127.0.0.1:5336 ---------------------------------------------
