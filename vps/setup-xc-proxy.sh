@@ -63,13 +63,24 @@ cat > /etc/nginx/snippets/xc-realip.conf <<'EOF'
 # Se fija (no se concatena) para que el cliente no pueda falsearla.
 proxy_set_header X-Real-IP         $remote_addr;
 proxy_set_header X-Forwarded-For   $remote_addr;
-proxy_set_header CF-Connecting-IP  $remote_addr;   # solo llega intacta en modo directo (ORIGIN_IP)
-proxy_set_header True-Client-IP    $remote_addr;
 proxy_set_header X-Forwarded-Proto $scheme;
 proxy_set_header X-Forwarded-Host  $http_host;
 proxy_set_header Connection        "";
 proxy_set_header Accept-Encoding   "";             # necesario para poder reescribir URLs
 EOF
+# CF-Connecting-IP solo se puede enviar en modo directo al origen.
+# Si va por Cloudflare, incluir esa cabecera provoca "error 1000" y corta la conexión.
+if [[ -n "$ORIGIN_IP" ]]; then
+  cat >> /etc/nginx/snippets/xc-realip.conf <<'EOF'
+proxy_set_header CF-Connecting-IP  $remote_addr;
+proxy_set_header True-Client-IP    $remote_addr;
+EOF
+else
+  cat >> /etc/nginx/snippets/xc-realip.conf <<'EOF'
+# Vía Cloudflare: NO se envía CF-Connecting-IP (Cloudflare la rechaza con error 1000).
+# La IP del cliente viaja en X-Forwarded-For; el origen debe leerla desde ahí.
+EOF
+fi
 
 echo ">> IP real si ${PROXY_DOMAIN} pasa también por Cloudflare (nube naranja)..."
 CF4=$(curl -fsS --max-time 10 https://www.cloudflare.com/ips-v4 || true)
