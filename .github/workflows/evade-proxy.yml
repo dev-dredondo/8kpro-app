@@ -1,0 +1,60 @@
+name: evade-proxy (binario para el VPS)
+
+# Compila evade-proxy (https://github.com/Oihalitz/xdp-dns-evadeproxy) para Ubuntu 24.04 x86_64
+# y lo deja en la pre-release "evade-proxy-bin" de este repo. vps/instalar-dns-evade.sh lo descarga
+# de ahí, así el VPS no tiene que compilar Rust (necesita ~2,5 GB de disco y RAM que no tiene).
+#
+# Es una PRE-RELEASE y nunca se marca como "latest": no afecta a releases/latest/download/…apk
+# ni al actualizador de la app.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: [ ".github/workflows/evade-proxy.yml" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: evade-proxy-bin
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Descargar xdp-dns-evadeproxy
+        uses: actions/checkout@v4
+        with:
+          repository: Oihalitz/xdp-dns-evadeproxy
+          path: src
+
+      - name: Rust estable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Compilar
+        working-directory: src
+        run: |
+          cargo build --release --locked
+          strip target/release/evade-proxy
+          mkdir -p ../out
+          cp target/release/evade-proxy ../out/evade-proxy-linux-x86_64
+          git rev-parse HEAD > ../out/evade-proxy-commit.txt
+          (cd ../out && sha256sum evade-proxy-linux-x86_64 > evade-proxy-linux-x86_64.sha256)
+
+      - name: Publicar en la pre-release evade-proxy-bin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          COMMIT=$(cat out/evade-proxy-commit.txt)
+          if ! gh release view evade-proxy-bin -R "$REPO" >/dev/null 2>&1; then
+            gh release create evade-proxy-bin -R "$REPO" --prerelease --latest=false \
+              --target "$GITHUB_SHA" --title "evade-proxy (binario VPS)" \
+              --notes "Binario de evade-proxy para Ubuntu 24.04 x86_64. No es una versión de la app."
+          fi
+          gh release upload evade-proxy-bin -R "$REPO" --clobber \
+            out/evade-proxy-linux-x86_64 out/evade-proxy-linux-x86_64.sha256 out/evade-proxy-commit.txt
+          gh release edit evade-proxy-bin -R "$REPO" --prerelease --latest=false \
+            --notes "Binario de evade-proxy para Ubuntu 24.04 x86_64, compilado de Oihalitz/xdp-dns-evadeproxy@${COMMIT}. No es una versión de la app."

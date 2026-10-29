@@ -47,41 +47,25 @@ case "$(uname -m)" in
 esac
 
 # --- 1. Paquetes --------------------------------------------------------------
-verde "1/7 Instalando paquetes del sistema"
+verde "1/6 Instalando paquetes del sistema"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -y -q git curl python3 dnsutils build-essential pkg-config unbound unbound-anchor dns-root-data ca-certificates
+apt-get install -y -q git curl python3 dnsutils unbound unbound-anchor dns-root-data ca-certificates
 
-# --- 2. Memoria y disco (compilar Rust necesita ~2,5 GB entre RAM y swap) ----
-MEM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
-SWAP_MB=$(awk '/SwapTotal/ {print int($2/1024)}' /proc/meminfo)
+# --- 2. Disco -------------------------------------------------------------------
+# Ya no se compila nada en el VPS: basta con ~300 MB libres.
 LIBRE_MB=$(df -Pm / | awk 'NR==2 {print $4}')
-(( LIBRE_MB >= 2500 )) || error "Solo quedan ${LIBRE_MB} MB libres en disco; hacen falta ~2,5 GB para compilar. Libera espacio (p. ej. apt clean, journalctl --vacuum-size=100M)."
-SWAP_TEMP=""
-if (( MEM_MB + SWAP_MB < 2500 )); then
-    verde "2/7 RAM ${MEM_MB} MB + swap ${SWAP_MB} MB: añadiendo swap temporal de 2 GB para compilar"
-    SWAP_TEMP="/swap-compilar"
-    [[ -f "$SWAP_TEMP" ]] && { swapoff "$SWAP_TEMP" 2>/dev/null || true; rm -f "$SWAP_TEMP"; }
-    fallocate -l 2G "$SWAP_TEMP"
-    chmod 600 "$SWAP_TEMP"
-    mkswap "$SWAP_TEMP" >/dev/null
-    swapon "$SWAP_TEMP"
-else
-    verde "2/7 Memoria suficiente (RAM ${MEM_MB} MB + swap ${SWAP_MB} MB)"
+if (( LIBRE_MB < 300 )); then
+    error "Solo quedan ${LIBRE_MB} MB libres en disco; hacen falta ~300 MB. Prueba: apt clean; journalctl --vacuum-size=100M"
 fi
-
-# --- 3. Rust ------------------------------------------------------------------
-verde "3/7 Rust"
-if ! command -v cargo >/dev/null; then
-    [[ -x "$HOME/.cargo/bin/cargo" ]] || curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+verde "2/6 Disco OK (${LIBRE_MB} MB libres)"
+if [[ -d "$HOME/.rustup" ]] && [[ "${CONSERVAR_RUST:-0}" != "1" ]]; then
+    aviso "Hay un Rust instalado en $HOME/.rustup (lo dejó una versión anterior de este script)."
+    aviso "Ya no hace falta. Para liberar ~600 MB:  rustup self uninstall -y"
 fi
-# shellcheck disable=SC1091
-source "$HOME/.cargo/env"
-rustup update stable >/dev/null 2>&1 || true
-cargo --version
 
 # --- 4. Unbound en 127.0.0.1:5336 ---------------------------------------------
-verde "4/7 Configurando Unbound en 127.0.0.1:${UNBOUND_PORT}"
+verde "3/6 Configurando Unbound en 127.0.0.1:${UNBOUND_PORT}"
 cat > /etc/unbound/unbound.conf.d/evade.conf <<EOF
 # Generado por instalar-dns-evade.sh
 server:
@@ -111,27 +95,49 @@ dig @127.0.0.1 -p $UNBOUND_PORT google.com +short +time=5 | grep -q . \
     || error "Unbound no responde en el puerto $UNBOUND_PORT (mira: journalctl -u unbound)."
 echo "Unbound OK"
 
-# --- 5. evade-proxy -----------------------------------------------------------
-verde "5/7 Descargando y compilando evade-proxy (puede tardar varios minutos)"
-if [[ -d "$SRC_DIR/.git" ]]; then
-    git -C "$SRC_DIR" pull --ff-only
-else
-    git clone "$REPO_URL" "$SRC_DIR"
-fi
-# El script oficial compila, instala servicios y descarga la primera lista
-( cd "$SRC_DIR" && ./scripts/install.sh )
-# Si ya existía el binario, forzamos reinicio para cargar la versión nueva
+# --- 4. evade-proxy (binario precompilado, sin Rust) ------------------------
+verde "4/6 Instalando evade-proxy"
+[[ "$ARCH" == "x86_64" ]] || error "El binario precompilado solo existe para x86_64."
+BIN_BASE="https://github.com/dev-dredondo/8kpro-app/releases/download/evade-proxy-bin"
+TMPB=$(mktemp -d)
+curl -fsSL "$BIN_BASE/evade-proxy-linux-x86_64"        -o "$TMPB/evade-proxy-linux-x86_64" \
+    || error "No se pudo descargar el binario de evade-proxy desde $BIN_BASE"
+curl -fsSL "$BIN_BASE/evade-proxy-linux-x86_64.sha256" -o "$TMPB/sum.sha256"
+(cd "$TMPB" && sha256sum -c sum.sha256 >/dev/null) || error "La suma SHA-256 del binario no coincide."
+COMMIT=$(curl -fsSL "$BIN_BASE/evade-proxy-commit.txt" 2>/dev/null | tr -d '[:space:]' || true)
+
+# Scripts y unidades systemd del proyecto, en el mismo commit que el binario
+PREFIX=/opt/xdp-dns-evadeproxy
+rm -rf "$SRC_DIR"
+git clone -q --filter=blob:none "$REPO_URL" "$SRC_DIR"
+[[ -n "$COMMIT" ]] && git -C "$SRC_DIR" -c advice.detachedHead=false checkout -q "$COMMIT"
+
+install -m 0755 "$TMPB/evade-proxy-linux-x86_64" /usr/local/bin/evade-proxy
+rm -rf "$TMPB"
+mkdir -p "$PREFIX" /etc/unbound /var/lib/evade-proxy "$PREFIX/data"
+tar -C "$SRC_DIR" --exclude .git -cf - . | tar -C "$PREFIX" -xf -
+rm -rf "$SRC_DIR"
+[[ -f /etc/evade-proxy.env ]] || install -m 0600 "$PREFIX/evade-proxy.env.example" /etc/evade-proxy.env
+for u in xdp-evade-proxy.service update-blocked-ips.service update-blocked-ips.timer; do
+    install -m 0644 "$PREFIX/systemd/$u" "/etc/systemd/system/$u"
+done
+systemctl daemon-reload
+echo "Descargando lista de IPs bloqueadas y rangos de Cloudflare…"
+XDP_PREFIX="$PREFIX" "$PREFIX/scripts/update-cloudflare-prefixes.py" || aviso "No se pudieron bajar los rangos de Cloudflare (se reintentará solo)."
+XDP_PREFIX="$PREFIX" "$PREFIX/scripts/update-blocked-ips.sh" || aviso "No se pudo bajar la lista de IPs (se reintentará cada 15 s)."
+systemctl enable --now update-blocked-ips.timer >/dev/null 2>&1
+systemctl enable xdp-evade-proxy >/dev/null 2>&1
 systemctl restart xdp-evade-proxy
 sleep 2
 dig @127.0.0.1 -p $EVADE_PORT google.com +short +time=5 | grep -q . \
     || error "evade-proxy no responde (mira: journalctl -u xdp-evade-proxy)."
-echo "evade-proxy OK"
+echo "evade-proxy OK ($(/usr/local/bin/evade-proxy --version 2>/dev/null || echo "commit ${COMMIT:0:7}"))"
 
 # La sonda residencial no se usa: nos aseguramos de que su servicio no arranque
 systemctl disable --now xdp-probe-server >/dev/null 2>&1 || true
 
 # --- 6. Blocky (servidor DoH) -------------------------------------------------
-verde "6/7 Instalando Blocky (DoH en 127.0.0.1:${BLOCKY_HTTP_PORT})"
+verde "5/6 Instalando Blocky (DoH en 127.0.0.1:${BLOCKY_HTTP_PORT})"
 BLOCKY_URL=$(curl -fsSL https://api.github.com/repos/0xERR0R/blocky/releases/latest \
     | python3 -c "import sys,json; a=[x['browser_download_url'] for x in json.load(sys.stdin)['assets'] if x['name'].endswith('Linux_${ARCH}.tar.gz')]; print(a[0] if a else '')")
 [[ -n "$BLOCKY_URL" ]] || error "No encuentro la descarga de Blocky para ${ARCH}."
@@ -194,13 +200,8 @@ CODIGO=$(curl -s -o /dev/null -w '%{http_code}' \
 [[ "$CODIGO" == "200" ]] || error "Blocky no responde a DoH (código $CODIGO). Mira: journalctl -u blocky"
 echo "Blocky DoH OK"
 
-# --- Limpieza de swap temporal ------------------------------------------------
-if [[ -n "$SWAP_TEMP" ]]; then
-    swapoff "$SWAP_TEMP" && rm -f "$SWAP_TEMP"
-fi
-
-# --- 7. Servidor web ----------------------------------------------------------
-verde "7/7 Publicar /dns-query en https://${DOMINIO}"
+# --- 6. Servidor web ----------------------------------------------------------
+verde "6/6 Publicar /dns-query en https://${DOMINIO}"
 if command -v caddy >/dev/null; then
     cat <<EOF
 Tienes Caddy. Edita /etc/caddy/Caddyfile y, DENTRO del bloque de ${DOMINIO} { ... },
