@@ -50,20 +50,24 @@ esac
 verde "1/7 Instalando paquetes del sistema"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -y -q git curl python3 dnsutils build-essential pkg-config unbound ca-certificates
+apt-get install -y -q git curl python3 dnsutils build-essential pkg-config unbound unbound-anchor dns-root-data ca-certificates
 
-# --- 2. Swap temporal si hay poca RAM (compilar Rust la necesita) -------------
+# --- 2. Memoria y disco (compilar Rust necesita ~2,5 GB entre RAM y swap) ----
 MEM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
+SWAP_MB=$(awk '/SwapTotal/ {print int($2/1024)}' /proc/meminfo)
+LIBRE_MB=$(df -Pm / | awk 'NR==2 {print $4}')
+(( LIBRE_MB >= 2500 )) || error "Solo quedan ${LIBRE_MB} MB libres en disco; hacen falta ~2,5 GB para compilar. Libera espacio (p. ej. apt clean, journalctl --vacuum-size=100M)."
 SWAP_TEMP=""
-if (( MEM_MB < 1800 )) && ! swapon --show | grep -q .; then
-    verde "2/7 Poca RAM (${MEM_MB} MB): creando swap temporal de 2 GB para compilar"
-    fallocate -l 2G /swap-compilar
-    chmod 600 /swap-compilar
-    mkswap /swap-compilar >/dev/null
-    swapon /swap-compilar
+if (( MEM_MB + SWAP_MB < 2500 )); then
+    verde "2/7 RAM ${MEM_MB} MB + swap ${SWAP_MB} MB: añadiendo swap temporal de 2 GB para compilar"
     SWAP_TEMP="/swap-compilar"
+    [[ -f "$SWAP_TEMP" ]] && { swapoff "$SWAP_TEMP" 2>/dev/null || true; rm -f "$SWAP_TEMP"; }
+    fallocate -l 2G "$SWAP_TEMP"
+    chmod 600 "$SWAP_TEMP"
+    mkswap "$SWAP_TEMP" >/dev/null
+    swapon "$SWAP_TEMP"
 else
-    verde "2/7 RAM suficiente (${MEM_MB} MB)"
+    verde "2/7 Memoria suficiente (RAM ${MEM_MB} MB + swap ${SWAP_MB} MB)"
 fi
 
 # --- 3. Rust ------------------------------------------------------------------
@@ -91,6 +95,14 @@ server:
     hide-identity: yes
     hide-version: yes
 EOF
+# Ubuntu crea la clave DNSSEC raíz al arrancar el servicio; la generamos ya
+# para que unbound-checkconf no falle en una instalación recién hecha.
+mkdir -p /var/lib/unbound
+if [[ ! -s /var/lib/unbound/root.key ]]; then
+    unbound-anchor -a /var/lib/unbound/root.key || true
+    [[ -s /var/lib/unbound/root.key ]] || cp /usr/share/dns/root.key /var/lib/unbound/root.key 2>/dev/null || true
+fi
+chown -R unbound:unbound /var/lib/unbound
 unbound-checkconf >/dev/null || error "La configuración de Unbound no es válida."
 systemctl enable unbound >/dev/null 2>&1
 systemctl restart unbound
